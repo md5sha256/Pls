@@ -47,7 +47,8 @@ public class PlsCommand implements CommandExecutor {
         } else {
             message = message.append(Component.text().content(result.response()).color(NamedTextColor.GREEN).build());
         }
-        plugin.getServer().getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(sender, result.response()));
+        // run the command, remove the / from the command
+        plugin.getServer().getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(sender, result.response().substring(1)));
         sender.sendMessage(message);
     }
 
