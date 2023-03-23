@@ -42,7 +42,9 @@ public class PlsCommand implements CommandExecutor {
         } else {
             message = message.append(Component.text().content(result.response()).color(NamedTextColor.GREEN).build());
         }
-        Bukkit.dispatchCommand(sender, result.response());
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            Bukkit.dispatchCommand(sender, result.response());
+        });
         sender.sendMessage(message);
     }
 
