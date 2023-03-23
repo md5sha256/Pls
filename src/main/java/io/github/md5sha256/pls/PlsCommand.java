@@ -2,11 +2,13 @@ package io.github.md5sha256.pls;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurateException;
+
 
 public class PlsCommand implements CommandExecutor {
 
@@ -40,6 +42,7 @@ public class PlsCommand implements CommandExecutor {
         } else {
             message = message.append(Component.text().content(result.response()).color(NamedTextColor.GREEN).build());
         }
+        Bukkit.dispatchCommand(sender, Component.text().content(result.response()));
         sender.sendMessage(message);
     }
 

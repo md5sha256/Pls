@@ -86,7 +86,7 @@ public class RequestExecutor {
 
 
     private static Message systemMessage() {
-        String content = "You are a helpful assistant. You will generate minecraft commands based on user input. Your response should contain ONLY the command and NO explanation. Do NOT ever use newlines to seperate commands, instead use ; or &&.";
+        String content = "You are a helpful assistant. You will generate minecraft commands based on user input. Your response should contain ONLY the command and NO explanation. Start all your commands with a '/'.";
         return new Message("system", content);
     }
 
