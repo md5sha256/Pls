@@ -44,7 +44,7 @@ public final class PlsPlugin extends JavaPlugin {
     private Settings loadSettings() {
         File file = getDataFolder().toPath().resolve("settings.yml").toFile();
         if (!file.exists()) {
-            file.mkdirs();
+            getDataFolder().mkdirs();
             try (InputStream in = this.getClass().getClassLoader().getResourceAsStream("settings.yml");
                  OutputStream os = new FileOutputStream(file)) {
                 if (in == null) {
