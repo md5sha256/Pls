@@ -50,8 +50,8 @@ public class PlsCommand implements CommandExecutor {
         // run the commands on the main thread
         Bukkit.getScheduler().runTask(plugin, () -> {
             // split the response by newlines and run each command
-            for (String command : result.response().split("\n/")) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+            for (String command : result.response().split("\n")) {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.substring(1));
             }
         });
         sender.sendMessage(message);
