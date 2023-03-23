@@ -42,15 +42,19 @@ public class PlsCommand implements CommandExecutor {
 
     private void printResult(CommandSender sender, RequestResult result) {
         Component message = Component.text("[OpenAi] ");
+        String response = result.response();
         if (result.error()) {
-            message = message.append(Component.text().content(result.response()).color(NamedTextColor.RED).build());
+            message = message.append(Component.text().content(response).color(NamedTextColor.RED).build());
         } else {
-            message = message.append(Component.text().content(result.response()).color(NamedTextColor.GREEN).build());
+            message = message.append(Component.text().content(response).color(NamedTextColor.GREEN).build());
         }
         // run the commands on the main thread
         Bukkit.getScheduler().runTask(plugin, () -> {
             // split the response by newlines and run each command
-            for (String command : result.response().split("\n")) {
+            for (String command : response.split("\n")) {
+                if (command.isBlank()) {
+                    continue;
+                }
                 Bukkit.dispatchCommand(sender, command.substring(1));
             }
         });
