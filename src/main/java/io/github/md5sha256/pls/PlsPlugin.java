@@ -51,6 +51,7 @@ public final class PlsPlugin extends JavaPlugin {
                     this.getLogger().log(Level.SEVERE, () -> "Failed to load default settings.yml");
                     return null;
                 }
+                file.createNewFile();
                 in.transferTo(os);
                 this.getLogger().log(Level.SEVERE, () -> "Missing open-ai token. Please add your token in the settings.yml");
                 return null;
