@@ -1,0 +1,7 @@
+name: Pls
+version: '${version}'
+main: io.github.md5sha256.pls.PlsPlugin
+api-version: 1.19
+commands:
+  pls:
+    description: "send a prompt to openai"
