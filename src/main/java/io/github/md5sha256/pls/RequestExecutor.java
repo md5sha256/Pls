@@ -86,7 +86,7 @@ public class RequestExecutor {
 
 
     private static Message systemMessage() {
-        String content = "You are a helpful assistant. You will generate minecraft commands based on user input. Your response should contain ONLY the command and EVER any explanation whatsoever, even when you give multiple commands. Start all your commands with a '/'.";
+        String content = "You are a helpful assistant. You will generate minecraft commands based on user input. Your response should contain ONLY the command and NEVER any explanation whatsoever, even when you give multiple commands. Start all your commands with a '/'.";
         return new Message("system", content);
     }
 
