@@ -29,7 +29,9 @@ public final class PlsPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         super.onEnable();
+        // Make a new request executor
         this.requestExecutor = new RequestExecutor(this, settings.openAiToken());
+        // Set up the command executor for the pls command
         getCommand("pls").setExecutor(new PlsCommand(this.requestExecutor, this));
         this.getLogger().info("Pls Plugin enabled successfully");
     }
@@ -43,8 +45,10 @@ public final class PlsPlugin extends JavaPlugin {
 
     private Settings loadSettings() {
         File file = getDataFolder().toPath().resolve("settings.yml").toFile();
+        // Create default settings file if one doesn't exist
         if (!file.exists()) {
             getDataFolder().mkdirs();
+            // Load the default settings file from jar
             try (InputStream in = this.getClass().getClassLoader().getResourceAsStream("settings.yml");
                  OutputStream os = new FileOutputStream(file)) {
                 if (in == null) {
@@ -60,12 +64,14 @@ public final class PlsPlugin extends JavaPlugin {
                 return null;
             }
         }
+        // Load the settings into memory
         YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
         String rawToken = yamlConfiguration.getString("open-ai-token");
         if (rawToken == null) {
             this.getLogger().log(Level.SEVERE, () -> "Missing key open-ai-token");
             return null;
         }
+        // create the settings object
         return new Settings(rawToken);
     }
 }
