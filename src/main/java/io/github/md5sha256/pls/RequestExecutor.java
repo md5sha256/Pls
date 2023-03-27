@@ -83,6 +83,7 @@ public class RequestExecutor {
     private HttpRequest.Builder buildHttpRequest() {
         return HttpRequest.newBuilder(openAi)
                 .setHeader("Content-Type", "application/json")
+                .setHeader("Accept", "application/json")
                 .timeout(Duration.ofSeconds(15));
     }
 
