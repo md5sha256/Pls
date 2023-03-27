@@ -24,7 +24,6 @@ import java.util.concurrent.CompletableFuture;
  */
 public class RequestExecutor {
 
-    private final String openAiToken;
     private final URI openAi;
     private final Plugin plugin;
 
@@ -33,12 +32,10 @@ public class RequestExecutor {
      * @param plugin The owning plugin
      * @param openAiToken The open ai token to use
      */
-    public RequestExecutor(Plugin plugin, String openAiToken) {
+    public RequestExecutor(Plugin plugin) {
         this.plugin = plugin;
-        this.openAiToken = openAiToken;
-        plugin.getLogger().info("Token: " + openAiToken);
         try {
-            openAi = new URI("https://api.openai.com/v1/chat/completions");
+            openAi = new URI("http://127.0.0.1:5000/api/plsmc");
         } catch (URISyntaxException ex) {
             // This should never happen
             throw new IllegalStateException(ex);
@@ -86,7 +83,6 @@ public class RequestExecutor {
     private HttpRequest.Builder buildHttpRequest() {
         return HttpRequest.newBuilder(openAi)
                 .setHeader("Content-Type", "application/json")
-                .setHeader("Authorization", "Bearer " + this.openAiToken)
                 .timeout(Duration.ofSeconds(15));
     }
 
@@ -98,9 +94,8 @@ public class RequestExecutor {
      */
     private String formatModel(String params) throws ConfigurateException {
         ConfigurationNode node = JacksonConfigurationLoader.builder().build().createNode();
-        node.node("model").set("gpt-3.5-turbo");
         ConfigurationNode messagesNode = node.node("messages");
-        messagesNode.setList(Message.class, List.of(systemMessage(), userMessage(params)));
+        messagesNode.setList(Message.class, List.of(userMessage(params)));
         return JacksonConfigurationLoader.builder().buildAndSaveString(node);
     }
 
@@ -119,17 +114,6 @@ public class RequestExecutor {
         HttpClient client = HttpClient.newHttpClient();
         CompletableFuture<HttpResponse<byte[]>> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray());
         return response.thenApply(HttpResponse::body);
-    }
-
-
-    /**
-     * Represents the system message in a web request
-     * The result is basically a constant
-     * @return Returns the system message
-     */
-    private static Message systemMessage() {
-        String content = "You are a helpful assistant. You will generate minecraft commands based on user input. Your response should contain ONLY the command and NEVER any explanation whatsoever, even when you give multiple commands. Start all your commands with a '/'.";
-        return new Message("system", content);
     }
 
     /**
