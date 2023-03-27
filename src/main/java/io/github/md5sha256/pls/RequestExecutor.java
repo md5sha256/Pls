@@ -57,7 +57,6 @@ public class RequestExecutor {
             return new RequestResult(ex.getMessage(), true);
         }
         ConfigurationNode choicesNode = node.node("command");
-        List<Choice> choices;
         /*
         try {
             choices = choicesNode.getList(Choice.class);
@@ -75,7 +74,7 @@ public class RequestExecutor {
         */
         // Return the first choice
         Choice choice = choices.get(0);
-        return new RequestResult(choice, false);
+        return new RequestResult(choicesNode.toString(), false);
     }
 
     /**
