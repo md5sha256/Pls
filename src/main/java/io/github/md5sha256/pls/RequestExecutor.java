@@ -73,7 +73,6 @@ public class RequestExecutor {
         }
         */
         // Return the first choice
-        Choice choice = choices.get(0);
         return new RequestResult(choicesNode.toString(), false);
     }
 
