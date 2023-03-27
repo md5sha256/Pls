@@ -57,23 +57,10 @@ public class RequestExecutor {
             return new RequestResult(ex.getMessage(), true);
         }
         ConfigurationNode choicesNode = node.node("command");
-        /*
-        try {
-            choices = choicesNode.getList(Choice.class);
-        } catch (ConfigurateException ex) {
-            // This will only happen if the API format changes or if we get a corrupted json
-            // we are catching a serialization error here
-            return new RequestResult(ex.getMessage(), true);
+        if (choicesNode.isVirtual()) {
+            return new RequestResult("No command found", true);
         }
-        if (choices == null || choices.isEmpty()) {
-            // This should never happen, but if it does then we log the json string to console
-            this.plugin.getLogger().info(new String(jsonBytes, StandardCharsets.UTF_8));
-            // we never return a null request
-            return new RequestResult("no choices", true);
-        }
-        */
-        // Return the command from choicesNode json
-        String command = choicesNode.value();
+        String command = choicesNode.getString();
         return new RequestResult(command , false);
     }
 
