@@ -94,8 +94,7 @@ public class RequestExecutor {
      */
     private String formatModel(String params) throws ConfigurateException {
         ConfigurationNode node = JacksonConfigurationLoader.builder().build().createNode();
-        ConfigurationNode messagesNode = node.node("message");
-        messagesNode.setList(Message.class, List.of(userMessage(params)));
+        node.node("message").set(userMessage(params));
         return JacksonConfigurationLoader.builder().buildAndSaveString(node);
     }
 
