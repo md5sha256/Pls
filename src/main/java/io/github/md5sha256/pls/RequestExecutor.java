@@ -73,7 +73,7 @@ public class RequestExecutor {
         }
         */
         // Return the first choice
-        return new RequestResult(choicesNode.command, false);
+        return new RequestResult(choicesNode.command(), false);
     }
 
     /**
