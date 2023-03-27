@@ -56,8 +56,9 @@ public class RequestExecutor {
         } catch (ConfigurateException ex) {
             return new RequestResult(ex.getMessage(), true);
         }
-        ConfigurationNode choicesNode = node.node("choices");
+        ConfigurationNode choicesNode = node.node("command");
         List<Choice> choices;
+        /*
         try {
             choices = choicesNode.getList(Choice.class);
         } catch (ConfigurateException ex) {
@@ -71,9 +72,10 @@ public class RequestExecutor {
             // we never return a null request
             return new RequestResult("no choices", true);
         }
+        */
         // Return the first choice
         Choice choice = choices.get(0);
-        return new RequestResult(choice.message.content, false);
+        return new RequestResult(choice, false);
     }
 
     /**
