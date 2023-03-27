@@ -30,7 +30,7 @@ public final class PlsPlugin extends JavaPlugin {
     public void onEnable() {
         super.onEnable();
         // Make a new request executor
-        this.requestExecutor = new RequestExecutor(this, settings.openAiToken());
+        this.requestExecutor = new RequestExecutor(this);
         // Set up the command executor for the pls command
         getCommand("pls").setExecutor(new PlsCommand(this.requestExecutor, this));
         this.getLogger().info("Pls Plugin enabled successfully");
