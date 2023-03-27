@@ -57,9 +57,6 @@ public class RequestExecutor {
             return new RequestResult(ex.getMessage(), true);
         }
         ConfigurationNode choicesNode = node.node("command");
-        if (choicesNode.isVirtual()) {
-            return new RequestResult("No command found", true);
-        }
         String command = choicesNode.getString();
         return new RequestResult(command , false);
     }
