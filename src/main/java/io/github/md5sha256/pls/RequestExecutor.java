@@ -72,8 +72,9 @@ public class RequestExecutor {
             return new RequestResult("no choices", true);
         }
         */
-        // Return the first choice
-        return new RequestResult(choicesNode.command(), false);
+        // Return the command from choicesNode json
+        String command = choicesNode.value();
+        return new RequestResult(command , false);
     }
 
     /**
