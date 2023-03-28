@@ -1,5 +1,6 @@
 package io.github.md5sha256.pls;
 
+
 /**
  * Represents the result of a request to OpenAi
  *

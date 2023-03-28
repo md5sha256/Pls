@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 
+
 public final class PlsPlugin extends JavaPlugin {
 
     private Settings settings;

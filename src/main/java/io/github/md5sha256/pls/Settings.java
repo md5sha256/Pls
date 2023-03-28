@@ -1,5 +1,6 @@
 package io.github.md5sha256.pls;
 
+
 /**
  * The settings which are defined in the settings.yml
  *

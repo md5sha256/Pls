@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurateException;
 
 
-
 public class PlsCommand implements CommandExecutor {
 
     private final RequestExecutor requestExecutor;
