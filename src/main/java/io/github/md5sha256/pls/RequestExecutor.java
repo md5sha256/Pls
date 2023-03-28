@@ -58,6 +58,7 @@ public class RequestExecutor {
         }
         ConfigurationNode choicesNode = node.node("command");
         String command = choicesNode.getString();
+        system.out.println(command);
         return new RequestResult(command , false);
     }
 
