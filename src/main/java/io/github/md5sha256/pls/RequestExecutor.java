@@ -80,7 +80,7 @@ public class RequestExecutor {
      */
     private String formatModel(String params) throws ConfigurateException {
         ConfigurationNode node = JacksonConfigurationLoader.builder().build().createNode();
-        node.node("message").set(userMessage(params));
+        node.node("message").set(params);
         return JacksonConfigurationLoader.builder().buildAndSaveString(node);
     }
 
