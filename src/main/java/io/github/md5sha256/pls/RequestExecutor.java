@@ -51,6 +51,7 @@ public class RequestExecutor {
         ByteArrayInputStream bis = new ByteArrayInputStream(jsonBytes);
         JacksonConfigurationLoader loader = JacksonConfigurationLoader.builder().source(() -> new BufferedReader(new InputStreamReader(bis))).build();
         ConfigurationNode node;
+        /*
         try {
             node = loader.load();
         } catch (ConfigurateException ex) {
@@ -73,6 +74,7 @@ public class RequestExecutor {
         }
         // Return the first choice
         Choice choice = choices.get(0);
+        */
         return new RequestResult(node.command, false);
     }
 
