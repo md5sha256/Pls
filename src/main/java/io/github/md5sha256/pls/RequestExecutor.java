@@ -48,17 +48,14 @@ public class RequestExecutor {
      * @return A never-null web request
      */
     public RequestResult formatResponse(byte[] jsonBytes) {
-        ByteArrayInputStream bis = new ByteArrayInputStream(jsonBytes);
-        JacksonConfigurationLoader loader = JacksonConfigurationLoader.builder().source(() -> new BufferedReader(new InputStreamReader(bis))).build();
-        ConfigurationNode node;
         try {
-            node = loader.load();
-        } catch (ConfigurateException ex) {
-            return new RequestResult(ex.getMessage(), true);
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(jsonBytes);
+            String command = jsonNode.get("command").asText();
+            return new RequestResult(command , false);
+        } catch (IOException e) {
+            return new RequestResult(e.getMessage(), true);
         }
-        ConfigurationNode choicesNode = node.node("command");
-        String command = choicesNode.getString();
-        return new RequestResult(command , false);
     }
 
     /**
@@ -100,38 +97,5 @@ public class RequestExecutor {
         CompletableFuture<HttpResponse<byte[]>> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray());
         return response.thenApply(HttpResponse::body);
     }
-
-    /**
-     * Represents the user message in a web request
-     * @param params The content of the message
-     * @return Returns a message object
-     */
-    private static Message userMessage(String params) {
-        return new Message("user", params);
-    }
-
-    /**
-     * A data object which represents a user or system message.
-     * Useful for serialization via configurate
-     * @param role The role (either user or system)
-     * @param content The content of the emssage
-     */
-    @ConfigSerializable
-    public record Message(String role, String content) {
-
-    }
-
-    /**
-     * A data object which a choice in the web response
-     *  Useful for serialization via configurate
-     * @param message the message response
-     * @param finishReason the finish reason
-     * @param index the index of the choice in the response array
-     */
-    @ConfigSerializable
-    public record Choice(Message message, String finishReason, int index) {
-
-    }
-
 
 }
