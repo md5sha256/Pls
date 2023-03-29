@@ -61,7 +61,7 @@ public class RequestExecutor {
             this.plugin.getLogger().info(new String(jsonBytes, StandardCharsets.UTF_8));
             return new RequestResult("no command", true);
         }
-        String command = commandNode.getString().trim();
+        String command = commandNode;
         return new RequestResult(command, false);
     }
 
