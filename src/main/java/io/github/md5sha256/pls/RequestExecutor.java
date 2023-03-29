@@ -50,13 +50,18 @@ public class RequestExecutor {
     public RequestResult formatResponse(byte[] jsonBytes) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(jsonBytes);
-            String command = jsonNode.get("command").asText();
-            return new RequestResult(command , false);
+            JsonNode rootNode = objectMapper.readTree(jsonBytes);
+            JsonNode commandNode = rootNode.path("command");
+            if (commandNode.isMissingNode() || commandNode.isNull()) {
+                return new RequestResult("No command found in response", true);
+            }
+            String command = commandNode.asText();
+            return new RequestResult(command, false);
         } catch (IOException e) {
-            return new RequestResult(e.getMessage(), true);
+            return new RequestResult("Error parsing response: " + e.getMessage(), true);
         }
     }
+
 
     /**
      * Set up a new HttpRequest with the timeout, and content-type and authorization headers filled in
