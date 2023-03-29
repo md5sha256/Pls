@@ -48,19 +48,20 @@ public class RequestExecutor {
      * @return A never-null web request
      */
     public RequestResult formatResponse(byte[] jsonBytes) {
-        String jsonString = new String(jsonBytes, StandardCharsets.UTF_8);
-        JsonObject jsonObject;
-        try (JsonReader jsonReader = Json.createReader(new StringReader(jsonString))) {
-            jsonObject = jsonReader.readObject();
-        } catch (JsonException ex) {
+        ByteArrayInputStream bis = new ByteArrayInputStream(jsonBytes);
+        JacksonConfigurationLoader loader = JacksonConfigurationLoader.builder().source(() -> new BufferedReader(new InputStreamReader(bis))).build();
+        ConfigurationNode node;
+        try {
+            node = loader.load();
+        } catch (ConfigurateException ex) {
             return new RequestResult(ex.getMessage(), true);
         }
-        JsonValue commandValue = jsonObject.get("command");
-        if (commandValue == null || commandValue.getValueType() != JsonValue.ValueType.STRING) {
-            this.plugin.getLogger().info(jsonString);
+        ConfigurationNode commandNode = node.node("command");
+        if (commandNode.isVirtual()) {
+            this.plugin.getLogger().info(new String(jsonBytes, StandardCharsets.UTF_8));
             return new RequestResult("no command", true);
         }
-        String command = commandValue.asString().trim();
+        String command = commandNode.getString().trim();
         return new RequestResult(command, false);
     }
 
