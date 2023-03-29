@@ -48,19 +48,20 @@ public class RequestExecutor {
      * @return A never-null web request
      */
     public RequestResult formatResponse(byte[] jsonBytes) {
-        ConfigurationNode node;
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            node = mapper.readTree(jsonBytes);
-        } catch (IOException ex) {
+        String jsonString = new String(jsonBytes, StandardCharsets.UTF_8);
+        JsonObject jsonObject;
+        try (JsonReader jsonReader = Json.createReader(new StringReader(jsonString))) {
+            jsonObject = jsonReader.readObject();
+        } catch (JsonException ex) {
             return new RequestResult(ex.getMessage(), true);
         }
-        String command = node.get("command").asText();
-        if (command == null || command.isEmpty()) {
-            this.plugin.getLogger().info(new String(jsonBytes, StandardCharsets.UTF_8));
+        JsonValue commandValue = jsonObject.get("command");
+        if (commandValue == null || commandValue.getValueType() != JsonValue.ValueType.STRING) {
+            this.plugin.getLogger().info(jsonString);
             return new RequestResult("no command", true);
         }
-        return new RequestResult(command.trim(), false);
+        String command = commandValue.asString().trim();
+        return new RequestResult(command, false);
     }
 
 
