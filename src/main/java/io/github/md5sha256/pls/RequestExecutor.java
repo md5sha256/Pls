@@ -62,7 +62,7 @@ public class RequestExecutor {
             return new RequestResult("no command", true);
         }
         String command = commandNode.getString();
-        return new RequestResult("/summon cow", false);
+        return new RequestResult(command, false);
     }
 
 
