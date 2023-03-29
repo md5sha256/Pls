@@ -57,7 +57,7 @@ public class RequestExecutor {
             return new RequestResult(ex.getMessage(), true);
         }
         ConfigurationNode commandNode = node.node("command");
-        if (commandNode.isVirtual()) {
+        if (commandNode == null) {
             this.plugin.getLogger().info(new String(jsonBytes, StandardCharsets.UTF_8));
             return new RequestResult("no command", true);
         }
