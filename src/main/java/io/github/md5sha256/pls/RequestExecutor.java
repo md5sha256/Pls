@@ -48,34 +48,19 @@ public class RequestExecutor {
      * @return A never-null web request
      */
     public RequestResult formatResponse(byte[] jsonBytes) {
-        ByteArrayInputStream bis = new ByteArrayInputStream(jsonBytes);
-        JacksonConfigurationLoader loader = JacksonConfigurationLoader.builder().source(() -> new BufferedReader(new InputStreamReader(bis))).build();
         ConfigurationNode node;
-        /*
         try {
-            node = loader.load();
-        } catch (ConfigurateException ex) {
+            ObjectMapper mapper = new ObjectMapper();
+            node = mapper.readTree(jsonBytes);
+        } catch (IOException ex) {
             return new RequestResult(ex.getMessage(), true);
         }
-        ConfigurationNode choicesNode = node.node("command");
-        List<Choice> choices;
-        try {
-            choices = choicesNode.getList(Choice.class);
-        } catch (ConfigurateException ex) {
-            // This will only happen if the API format changes or if we get a corrupted json
-            // we are catching a serialization error here
-            return new RequestResult(ex.getMessage(), true);
-        }
-        if (choices == null || choices.isEmpty()) {
-            // This should never happen, but if it does then we log the json string to console
+        String command = node.get("command").asText();
+        if (command == null || command.isEmpty()) {
             this.plugin.getLogger().info(new String(jsonBytes, StandardCharsets.UTF_8));
-            // we never return a null request
-            return new RequestResult("no choices", true);
+            return new RequestResult("no command", true);
         }
-        // Return the first choice
-        Choice choice = choices.get(0);
-        */
-        return new RequestResult(node.command, false);
+        return new RequestResult(command.trim(), false);
     }
 
 
