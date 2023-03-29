@@ -45,8 +45,8 @@ public class PlsCommand implements CommandExecutor {
 
     private void printResult(CommandSender sender, RequestResult result) {
         Component message = Component.text("[OpenAi] ");
-        message = message.append(Component.text().content(response).color(NamedTextColor.RED).build());
         String response = result.response();
+        message = message.append(Component.text().content(response).color(NamedTextColor.RED).build());
         if (result.error()) {
             // Print error messages in red
             message = message.append(Component.text().content(response).color(NamedTextColor.RED).build());
