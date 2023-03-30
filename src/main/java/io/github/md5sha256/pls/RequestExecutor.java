@@ -35,7 +35,7 @@ public class RequestExecutor {
     public RequestExecutor(Plugin plugin) {
         this.plugin = plugin;
         try {
-            openAi = new URI("http://127.0.0.1:5000/api/plsmc");
+            openAi = new URI("http://chatrpi.com:5000/api/plsmc/command");
         } catch (URISyntaxException ex) {
             // This should never happen
             throw new IllegalStateException(ex);
@@ -85,7 +85,7 @@ public class RequestExecutor {
      */
     private String formatModel(String params) throws ConfigurateException {
         ConfigurationNode node = JacksonConfigurationLoader.builder().build().createNode();
-        node.node("message").set(params);
+        node.node("prompt").set(params);
         return JacksonConfigurationLoader.builder().buildAndSaveString(node);
     }
 
