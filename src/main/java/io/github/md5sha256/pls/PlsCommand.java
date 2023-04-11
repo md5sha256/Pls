@@ -8,17 +8,16 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.configurate.ConfigurateException;
 
 
 public class PlsCommand implements CommandExecutor {
 
-    private final RequestExecutor requestExecutor;
+    private final Endpoint endpoint;
     private final Plugin plugin;
 
 
-    public PlsCommand(RequestExecutor requestExecutor, Plugin plugin) {
-        this.requestExecutor = requestExecutor;
+    public PlsCommand(Endpoint endpoint, Plugin plugin) {
+        this.endpoint = endpoint;
         this.plugin = plugin;
     }
 
@@ -30,16 +29,8 @@ public class PlsCommand implements CommandExecutor {
         }
         // Join the args into a single string (greedy arg)
         final String joined = String.join(" ", args);
-        try {
-            // Send the request async, then format the response, then print the response to the sender
-            this.requestExecutor.sendRequest(joined).thenApply(this.requestExecutor::formatResponse)
-                    .thenAccept(result -> printResult(sender, result));
-        } catch (ConfigurateException ex) {
-            // We don't expect an error but if there is one we print the stacktrace
-            ex.printStackTrace();
-            return false;
-        }
-        // Return true if there isn't an error
+        // Send the request async, then format the response, then print the response to the sender
+        this.endpoint.requestCommand(joined).thenAccept(requestResult -> this.plugin.getServer().getScheduler().runTask(this.plugin, () -> printResult(sender, requestResult)));
         return true;
     }
 

@@ -4,8 +4,8 @@ package io.github.md5sha256.pls;
 /**
  * The settings which are defined in the settings.yml
  *
- * @param openAiToken The {@link String} OpenAi token which is in the form of "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+ * @param endpointUri The {@link String} Endpoint URI which should used to connect and interface with open-ai
  */
-public record Settings(String openAiToken) {
+public record Settings(String endpointUri) {
 
 }

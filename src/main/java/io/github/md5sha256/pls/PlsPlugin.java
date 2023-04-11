@@ -8,13 +8,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.logging.Level;
 
 
 public final class PlsPlugin extends JavaPlugin {
 
     private Settings settings;
-    private RequestExecutor requestExecutor;
+    private Endpoint endpoint;
 
     @Override
     public void onLoad() {
@@ -31,9 +33,16 @@ public final class PlsPlugin extends JavaPlugin {
     public void onEnable() {
         super.onEnable();
         // Make a new request executor
-        this.requestExecutor = new RequestExecutor(this);
+        try {
+            this.endpoint = new Endpoint(this.getLogger(), new URI(this.settings.endpointUri()));
+        } catch (URISyntaxException ex) {
+            this.getLogger().severe("Invalid endpoint URI");
+            ex.printStackTrace();
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         // Set up the command executor for the pls command
-        getCommand("pls").setExecutor(new PlsCommand(this.requestExecutor, this));
+        getCommand("pls").setExecutor(new PlsCommand(this.endpoint, this));
         this.getLogger().info("Pls Plugin enabled successfully");
     }
 
@@ -67,9 +76,9 @@ public final class PlsPlugin extends JavaPlugin {
         }
         // Load the settings into memory
         YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
-        String rawToken = yamlConfiguration.getString("open-ai-token");
+        String rawToken = yamlConfiguration.getString("endpoint");
         if (rawToken == null) {
-            this.getLogger().log(Level.SEVERE, () -> "Missing key open-ai-token");
+            this.getLogger().log(Level.SEVERE, () -> "Missing endpoint");
             return null;
         }
         // create the settings object
