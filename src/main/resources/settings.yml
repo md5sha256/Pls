@@ -1,2 +1,1 @@
-# open-ai-token: "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-open-ai-token:
+endpoint: "http://chatrpi.com:5000"
