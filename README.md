@@ -19,4 +19,4 @@ A minecraft paper plugin
 - ⚙️ Configure the plugin in the settings.yml file
 
 # 👥 Contributing
-- Read [contributing guidlines](CONTRIBUTING.md)
+- 📖 Read [contributing guidlines](CONTRIBUTING.md)
