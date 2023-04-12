@@ -13,7 +13,7 @@ A minecraft paper plugin
 - Can moderate chat and translate messages
 
 # 🛠️ Installation
-- 🚀 Run [PlsMC](https://github.com/MxDkl/PlsMC).
+- 🚀 Run [PlsMC](https://github.com/MxDkl/PlsMC), or find someone who is hosting it
 - 💻 Download or build the latest jar
 - 📁 Place the jar in the plugins folder of your server
 - 🔄 Restart the server
