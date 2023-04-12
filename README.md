@@ -17,6 +17,8 @@ A minecraft paper plugin
 - 📁 Place the jar in the plugins folder of your server
 - 🔄 Restart the server
 - ⚙️ Configure the plugin in the settings.yml file
+  - Add an ip to [PlsMC](https://github.com/MxDkl/PlsMC) api. If you are running PlsMC locally it should be 0.0.0.0:8000
+  - Configure moderation and translation settings
 
 # 👥 Contributing
 - 📖 Read [contributing guidlines](CONTRIBUTING.md)
