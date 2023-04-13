@@ -6,15 +6,18 @@ import org.spongepowered.configurate.jackson.JacksonConfigurationLoader;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Endpoint {
@@ -83,14 +86,27 @@ public class Endpoint {
         });
     }
 
-    public CompletableFuture<Boolean> requestDatapack(Path file, String prompt) {
+    public CompletableFuture<RequestResult> requestDatapack(String prompt, DatapackHandler datapackHandler) {
         HttpRequest request = buildHttpRequest(endpointDatapack).POST(HttpRequest.BodyPublishers.ofString(formatModel(prompt))).build();
-        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofFile(file)).thenApply(httpResponse -> {
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofInputStream()).thenApply(httpResponse -> {
             if (httpResponse.statusCode() != 200) {
                 this.logger.warning("Failed to save datapack. Status code: " + httpResponse.statusCode());
-                return false;
+                return new RequestResult("Failed to save datapack. Status code: " + httpResponse.statusCode(), true);
             }
-            return true;
+
+            Optional<String> content = httpResponse.headers().firstValue("Content-Disposition");
+            if (content.isEmpty()) {
+                this.logger.warning("Failed to save datapack, missing content-disposition header.");
+                return new RequestResult("Failed to save datapack, missing content-disposition header.", true);
+            }
+            String fileName = content.get().substring("attachment; filename=".length());
+            try (InputStream inputStream = httpResponse.body()) {
+                datapackHandler.acceptDatapack(fileName, inputStream);
+            } catch (IOException ex) {
+                this.logger.log(Level.SEVERE, "Failed to save datapack: fileName=" + fileName, ex);
+                return null;
+            }
+            return new RequestResult(fileName, false);
         });
     }
 

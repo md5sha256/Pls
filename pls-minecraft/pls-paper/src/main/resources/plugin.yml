@@ -4,4 +4,7 @@ main: io.github.md5sha256.pls.PlsPlugin
 api-version: 1.19
 commands:
   pls:
-    description: "send a prompt to openai"
+    description: "Generate and execute commands based on natural language input"
+    aliases: ["please"]
+  datapack:
+    description: " Generates a datapack based on natural language input"
