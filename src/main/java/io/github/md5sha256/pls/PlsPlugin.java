@@ -25,7 +25,6 @@ public final class PlsPlugin extends JavaPlugin {
         settings = loadSettings();
         if (settings == null) {
             this.getServer().getPluginManager().disablePlugin(this);
-            return;
         }
     }
 
@@ -33,14 +32,8 @@ public final class PlsPlugin extends JavaPlugin {
     public void onEnable() {
         super.onEnable();
         // Make a new request executor
-        try {
-            this.endpoint = new Endpoint(this.getLogger(), new URI(this.settings.endpointUri()));
-        } catch (URISyntaxException ex) {
-            this.getLogger().severe("Invalid endpoint URI");
-            ex.printStackTrace();
-            this.getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
+        this.endpoint = new Endpoint(this.getLogger(), this.settings.endpointUri());
+
         // Set up the command executor for the pls command
         getCommand("pls").setExecutor(new PlsCommand(this.endpoint, this));
         this.getLogger().info("Pls Plugin enabled successfully");
@@ -76,12 +69,19 @@ public final class PlsPlugin extends JavaPlugin {
         }
         // Load the settings into memory
         YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
-        String rawToken = yamlConfiguration.getString("endpoint");
-        if (rawToken == null) {
+        String rawEndpoint = yamlConfiguration.getString("endpoint");
+        if (rawEndpoint == null) {
             this.getLogger().log(Level.SEVERE, () -> "Missing endpoint");
             return null;
         }
+        URI endpoint;
+        try {
+            endpoint = new URI(rawEndpoint);
+        } catch (URISyntaxException ex) {
+            this.getLogger().log(Level.SEVERE, "invalid endpoint uri", ex);
+            return null;
+        }
         // create the settings object
-        return new Settings(rawToken);
+        return new Settings(endpoint);
     }
 }

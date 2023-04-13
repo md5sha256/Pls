@@ -40,12 +40,15 @@ public class PlsCommand implements CommandExecutor {
         if (result.error()) {
             // Print error messages in red
             message = message.append(Component.text().content(response).color(NamedTextColor.RED).build());
-        } else {
-            // Print results in green
-            message = message.append(Component.text().content(response).color(NamedTextColor.GREEN).build());
+            sender.sendMessage(message);
+            return;
         }
+        // Print results in green
+        message = message.append(Component.text().content(response).color(NamedTextColor.GREEN).build());
+        sender.sendMessage(message);
+
         // run the commands on the main thread
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        this.plugin.getServer().getScheduler().runTask(this.plugin, () -> {
             // split the response by newlines and run each command
             for (String command : response.split("\n")) {
                 // Don't dispatch blank commands
@@ -55,7 +58,6 @@ public class PlsCommand implements CommandExecutor {
                 Bukkit.dispatchCommand(sender, command.substring(1));
             }
         });
-        sender.sendMessage(message);
     }
 
     private void printRawResult(CommandSender sender, String message) {
