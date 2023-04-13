@@ -1,55 +1,47 @@
 plugins {
     java
+    `java-library`
     idea
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    eclipse
 }
 
 group = "io.github.md5sha256"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-    maven {
-        name = "papermc-repo"
-        url = uri("https://repo.papermc.io/repository/maven-public/")
-    }
-    maven {
-        name = "sonatype"
-        url = uri("https://oss.sonatype.org/content/groups/public/")
-    }
-}
+subprojects {
 
-dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
-    implementation("org.spongepowered:configurate-jackson:4.1.2")
-}
+    group = rootProject.group
+    version = rootProject.version
 
-val targetJavaVersion = 17
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
-
-
-tasks {
-    withType(JavaCompile::class) {
-        options.release.set(targetJavaVersion)
-        options.encoding = Charsets.UTF_8.name()
-        options.isFork = true
-        options.isDeprecation = true
+    apply {
+        plugin<JavaPlugin>()
+        plugin<JavaLibraryPlugin>()
+        plugin<IdeaPlugin>()
+        plugin<EclipsePlugin>()
     }
 
-    processResources {
-        filteringCharset = Charsets.UTF_8.name()
-        filesMatching("plugin.yml") {
-            expand("version" to project.version)
+    repositories {
+        mavenCentral()
+        maven("https://oss.sonatype.org/content/groups/public/")
+    }
+
+    java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+
+    tasks {
+        withType(JavaCompile::class) {
+            options.release.set(17)
+            options.encoding = Charsets.UTF_8.name()
+            options.isFork = true
+            options.isDeprecation = true
         }
-    }
 
-    assemble {
-        dependsOn(shadowJar)
-    }
+        withType(Javadoc::class) {
+            options.encoding = Charsets.UTF_8.name()
+        }
 
-    shadowJar {
-        val base = "io.github.md5sha256.pls.libraries"
-        relocate("org.spongepowered.configurate", "${base}.configurate")
+        withType(ProcessResources::class) {
+            filteringCharset = Charsets.UTF_8.name()
+        }
     }
 
 }

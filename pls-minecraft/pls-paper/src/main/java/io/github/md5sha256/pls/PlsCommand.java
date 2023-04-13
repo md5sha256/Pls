@@ -14,8 +14,6 @@ public class PlsCommand implements CommandExecutor {
 
     private final Endpoint endpoint;
     private final Plugin plugin;
-
-
     public PlsCommand(Endpoint endpoint, Plugin plugin) {
         this.endpoint = endpoint;
         this.plugin = plugin;
