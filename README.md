@@ -18,7 +18,7 @@ A minecraft paper plugin
 - 📁 Place the jar in the plugins folder of your server
 - 🔄 Restart the server
 - ⚙️ Configure the plugin in the settings.yml file
-  - If you are running PlsMC locally the ip should be 0.0.0.0:8000
+  - If you are running PlsMC locally the endpoint uri should be localhost:8000/api/plsmc/
 
 # 👥 Contributing
 - 📖 Read [contributing guidlines](CONTRIBUTING.md)
