@@ -28,7 +28,7 @@ public class DatapackCommand implements CommandExecutor {
         // Join the args into a single string (greedy arg)
         final String joined = String.join(" ", args);
         // Send the request async, then format the result, then print the result to the sender
-        sender.sendMessage(Component.text("Requesting generated datapack. This might take a while.").color(NamedTextColor.YELLOW));
+        sender.sendMessage(Component.text("[Assistant] ").append(Component.text("Requesting generated datapack. This might take a while.").color(NamedTextColor.YELLOW)));
         this.endpoint.requestDatapack(joined, this.datapackHandler).thenAccept(result -> {
             if (result.error()) {
                 sender.sendMessage(Component.text(result.errorData().errorMessage()).color(NamedTextColor.RED));

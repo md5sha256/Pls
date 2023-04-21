@@ -20,7 +20,7 @@ public class DatapackInstaller implements DatapackHandler {
     public void acceptDatapack(String fileName, InputStream inputStream) throws IOException {
         Server server = this.plugin.getServer();
         File root = server.getWorldContainer();
-        File datapackFolder = root.toPath().resolve("datapacks").toFile();
+        File datapackFolder = root.toPath().resolve("world/datapacks").toFile();
         if (!datapackFolder.isDirectory()) {
             datapackFolder.mkdirs();
         }
