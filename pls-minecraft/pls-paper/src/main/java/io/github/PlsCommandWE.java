@@ -28,7 +28,7 @@ public class PlsCommandWE implements CommandExecutor {
         // Join the args into a single string (greedy arg)
         final String joined = String.join(" ", args);
         // Send the request async, then format the result, then print the result to the sender
-        this.endpoint.requestCommand(joined).thenAccept(requestResult -> this.plugin.getServer().getScheduler().runTask(this.plugin, () -> printResult(sender, requestResult)));
+        this.endpoint.requestCommandWE(joined).thenAccept(requestResult -> this.plugin.getServer().getScheduler().runTask(this.plugin, () -> printResult(sender, requestResult)));
         return true;
     }
 
