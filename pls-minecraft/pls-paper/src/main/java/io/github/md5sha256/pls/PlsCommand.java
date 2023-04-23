@@ -58,6 +58,7 @@ public class PlsCommand implements CommandExecutor {
                 } else {
                     // Otherwise, it is a chat message
                     sender.sendMessage(Component.text("[Assistant] ").color(NamedTextColor.GREEN).append(Component.text(command)));
+                }
                 
             }
         });
