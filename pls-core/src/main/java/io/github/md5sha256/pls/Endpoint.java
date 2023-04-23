@@ -27,6 +27,7 @@ public class Endpoint {
     private final URI endpointDatapack;
     private final URI endpointCommand;
     private final URI endpointModeration;
+    private final URI endpointCommandWE;
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
