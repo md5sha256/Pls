@@ -52,7 +52,7 @@ public class PlsCommand implements CommandExecutor {
                 // Don't dispatch blank commands
                 if (command.isBlank()) {
                     continue;
-                } else if (command.startWiths("/")) {
+                } else if (command.startWith("/")) {
                     // If the command starts with a slash, dispatch it as a server command
                     this.plugin.getServer().dispatchCommand(sender, command.substring(1));
                 } else {
