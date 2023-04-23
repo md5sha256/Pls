@@ -36,7 +36,9 @@ public final class PlsPlugin extends JavaPlugin {
 
         // Set up the command executor for the pls command
         getCommand("pls").setExecutor(new PlsCommand(this.endpoint, this));
-        getCommand("datapack").setExecutor(new DatapackCommand(this.endpoint, this));
+        getCommand("pls-dp").setExecutor(new DatapackCommand(this.endpoint, this));
+        getCommand("pls-we").setExecutor(new PlsCommandWE(this.endpoint, this));
+        getCommand()
         this.getLogger().info("Pls Plugin enabled successfully");
     }
 

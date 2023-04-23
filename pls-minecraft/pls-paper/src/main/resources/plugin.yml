@@ -6,5 +6,7 @@ commands:
   pls:
     description: "Generate and execute commands based on natural language input"
     aliases: ["please"]
-  datapack:
-    description: " Generates a datapack based on natural language input"
+  pls-dp:
+    description: "Generates a datapack based on natural language input"
+  pls-we:
+    description: "Generate and executes worldedit commands bases on natural language input" 
