@@ -52,8 +52,13 @@ public class PlsCommand implements CommandExecutor {
                 // Don't dispatch blank commands
                 if (command.isBlank()) {
                     continue;
-                }
-                this.plugin.getServer().dispatchCommand(sender, command.substring(1));
+                } else if (command.startWiths("/")) {
+                    // If the command starts with a slash, dispatch it as a server command
+                    this.plugin.getServer().dispatchCommand(sender, command.substring(1));
+                } else {
+                    // Otherwise, it is a chat message
+                    sender.sendMessage(Component.text("[Assistant] ").color(NamedTextColor.GREEN).append(Component.text(command)));
+                
             }
         });
     }

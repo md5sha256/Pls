@@ -34,7 +34,7 @@ public class DatapackCommand implements CommandExecutor {
                 sender.sendMessage(Component.text(result.errorData().errorMessage()).color(NamedTextColor.RED));
                 return;
             }
-            sender.sendMessage(Component.text("Datapack has been installed successfully, name: " + result.result()).color(NamedTextColor.GREEN));
+            sender.sendMessage(Component.text("[Assistant] ").append(Component.text("Datapack has been installed successfully, name: " + result.result()).color(NamedTextColor.GREEN)));
         });
         return true;
     }

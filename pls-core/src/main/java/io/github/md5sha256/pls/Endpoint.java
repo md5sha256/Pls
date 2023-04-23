@@ -36,6 +36,7 @@ public class Endpoint {
         this.endpointCommand = endpoint.resolve("command");
         this.endpointDatapack = endpoint.resolve("datapack");
         this.endpointModeration = endpoint.resolve("moderation");
+        this.endpointCommandWE = endpoint.resolve("worldedit");
     }
 
     /**
@@ -68,6 +69,16 @@ public class Endpoint {
 
     public CompletableFuture<RequestResult<String>> requestCommand(String prompt) {
         HttpRequest request = buildHttpRequest(endpointCommand).POST(HttpRequest.BodyPublishers.ofString(formatPayload("prompt", prompt))).build();
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray()).thenApply(httpResponse -> {
+            if (httpResponse.statusCode() != 200) {
+                return new RequestResult<>(null, new ErrorData(new String(httpResponse.body(), StandardCharsets.UTF_8), true));
+            }
+            return parseCommands(httpResponse.body());
+        });
+    }
+
+    public CompletableFuture<RequestResult<String>> requestCommandWE(String prompt) {
+        HttpRequest request = buildHttpRequest(endpointCommandWE).POST(HttpRequest.BodyPublishers.ofString(formatPayload("prompt", prompt))).build();
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray()).thenApply(httpResponse -> {
             if (httpResponse.statusCode() != 200) {
                 return new RequestResult<>(null, new ErrorData(new String(httpResponse.body(), StandardCharsets.UTF_8), true));
