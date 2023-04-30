@@ -49,7 +49,7 @@ public class Endpoint {
         return HttpRequest.newBuilder(targetUri)
                 .setHeader("Content-Type", "application/json")
                 .setHeader("Accept", "application/json")
-                .timeout(Duration.ofSeconds(15));
+                .timeout(Duration.ofSeconds(300));
     }
 
     /**
