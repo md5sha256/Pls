@@ -9,11 +9,19 @@ repositories {
         name = "papermc-repo"
         url = uri("https://repo.papermc.io/repository/maven-public/")
     }
+    maven {
+        url = uri("https://libraries.minecraft.net")
+    }
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     implementation(projects.plsCore)
+    compileOnly(projects.plsMinecraft.plsPaperAdapter)
+    compileOnly("com.mojang:brigadier:1.1.8")
+    runtimeOnly(projects.plsMinecraft.plsPaperAdapter) {
+        targetConfiguration = "reobf"
+    }
 }
 
 val targetJavaVersion = 17
