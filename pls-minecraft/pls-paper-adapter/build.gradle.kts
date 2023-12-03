@@ -3,7 +3,7 @@ plugins {
     java
     idea
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.papermc.paperweight.userdev") version "1.5.9"
+    id("io.papermc.paperweight.userdev") version "1.5.10"
 }
 
 repositories {
@@ -18,11 +18,12 @@ dependencies {
         exclude("com.mojang.brigadier")
     }
     implementation(projects.plsCore)
+    testImplementation(platform("org.junit:junit-bom:5.10.1"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 val targetJavaVersion = 17
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
-
 
 tasks {
     withType(JavaCompile::class) {
@@ -37,6 +38,10 @@ tasks {
 
     named("reobfJar", io.papermc.paperweight.tasks.RemapJar::class) {
         outputJar.set(file("build/libs/${project.name}-${project.version}.jar"))
+    }
+
+    test {
+        useJUnitPlatform()
     }
 
 }

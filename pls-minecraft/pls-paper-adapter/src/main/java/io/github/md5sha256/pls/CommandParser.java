@@ -8,6 +8,7 @@ import com.mojang.brigadier.tree.RootCommandNode;
 import io.github.md5sha256.pls.function.Function;
 import io.github.md5sha256.pls.function.FunctionParameter;
 import io.github.md5sha256.pls.function.FunctionParameters;
+import io.leangen.geantyref.GenericTypeReflector;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -93,9 +94,8 @@ public class CommandParser {
         }
         if (root instanceof ArgumentCommandNode<CommandSourceStack, ?> argumentCommandNode) {
             ArgumentType<?> argumentType = argumentCommandNode.getType();
-            Class<? extends ArgumentType<?>> clazz = (Class<? extends ArgumentType<?>>) argumentType.getClass();
             @SuppressWarnings("rawtypes")
-            ArgumentTypeAdapter adapter = this.adapters.getAdapter(clazz)
+            ArgumentTypeAdapter adapter = this.adapters.getRawAdapter(argumentType.getClass())
                     .orElseGet(BasicArgumentTypeAdapter::new);
             FunctionParameter parameter = adapter.adaptArgumentType(argumentType, "", required);
             params.add(new ParameterContext(parameter, root.getName(), required));

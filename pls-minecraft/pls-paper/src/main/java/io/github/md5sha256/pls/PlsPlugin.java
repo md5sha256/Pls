@@ -30,6 +30,9 @@ public final class PlsPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (!this.isEnabled()) {
+            return;
+        }
         super.onEnable();
         // Make a new request executor
         this.endpoint = new Endpoint(this.getLogger(), this.settings.endpointUri());
@@ -38,6 +41,7 @@ public final class PlsPlugin extends JavaPlugin {
         getCommand("pls").setExecutor(new PlsCommand(this.endpoint, this));
         getCommand("datapack").setExecutor(new DatapackCommand(this.endpoint, this));
         this.getLogger().info("Pls Plugin enabled successfully");
+        CommandParserTestUtil.dumpServerCommands(this);
     }
 
     @Override

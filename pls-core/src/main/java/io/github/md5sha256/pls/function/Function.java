@@ -2,6 +2,7 @@ package io.github.md5sha256.pls.function;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Required;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
@@ -10,6 +11,7 @@ import java.util.Objects;
 
 
 @SuppressWarnings("unused")
+@ConfigSerializable
 public record Function(
         @Setting("name")
         @Required

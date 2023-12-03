@@ -1,8 +1,7 @@
-
 repositories {
 
 }
 
 dependencies {
-    implementation("org.spongepowered:configurate-jackson:4.1.2")
+    api("org.spongepowered:configurate-jackson:4.1.2")
 }

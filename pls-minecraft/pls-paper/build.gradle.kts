@@ -2,6 +2,7 @@ plugins {
     java
     idea
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("xyz.jpenilla.run-paper") version "2.2.2"
 }
 
 repositories {
@@ -50,6 +51,13 @@ tasks {
     shadowJar {
         val base = "io.github.md5sha256.pls.libraries"
         relocate("org.spongepowered.configurate", "${base}.configurate")
+    }
+
+    runServer {
+        // Configure the Minecraft version for our task.
+        // This is the only required configuration besides applying the plugin.
+        // Your plugin's jar (or shadowJar if present) will be used automatically.
+        minecraftVersion("1.20.2")
     }
 
 }
