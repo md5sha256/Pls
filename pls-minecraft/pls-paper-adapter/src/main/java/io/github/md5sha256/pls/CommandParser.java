@@ -10,14 +10,9 @@ import io.github.md5sha256.pls.function.FunctionParameter;
 import io.github.md5sha256.pls.function.FunctionParameters;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
-import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -32,6 +27,7 @@ public class CommandParser {
     private static final int OPERATOR_PERMISSION_LEVEL = 4;
 
     private static final CommandSourceStack TEST_SOURCE = createTestSource();
+
     private static CommandSourceStack createTestSource() {
         return new CommandSourceStack(
                 CommandSource.NULL,
@@ -50,17 +46,6 @@ public class CommandParser {
 
     public CommandParser(@NonNull ArgumentTypeAdapters adapters) {
         this.adapters = adapters;
-    }
-
-    public void test(Plugin plugin) {
-        plugin.getLogger().info("Starting test");
-        CraftServer bukkitServer = (CraftServer) Bukkit.getServer();
-        MinecraftServer minecraftServer = bukkitServer.getServer();
-        Commands commands = minecraftServer.getCommands();
-        RootCommandNode<CommandSourceStack> root = commands.getDispatcher().getRoot();
-        plugin.getLogger().info("Detected " + root.getChildren().size() + "commands!");
-        List<Function> functions = adaptCommand(root);
-        plugin.getLogger().info("Parsed " + functions.size() + " commands!");
     }
 
 
