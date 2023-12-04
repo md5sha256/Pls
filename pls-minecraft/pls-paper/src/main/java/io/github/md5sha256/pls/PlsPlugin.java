@@ -41,7 +41,22 @@ public final class PlsPlugin extends JavaPlugin {
         getCommand("pls").setExecutor(new PlsCommand(this.endpoint, this));
         getCommand("datapack").setExecutor(new DatapackCommand(this.endpoint, this));
         this.getLogger().info("Pls Plugin enabled successfully");
-        CommandParserTestUtil.dumpServerCommands(this);
+        File dataFolder = getDataFolder();
+        if (!dataFolder.isDirectory()) {
+            dataFolder.mkdir();
+        }
+        getServer().getScheduler().runTaskLater(this, () -> {
+            File file = new File(dataFolder, "commands.json");
+            file.delete();
+            try(OutputStream outputStream = new FileOutputStream(file)) {
+                file.createNewFile();
+                CommandParserTestUtil.dumpServerCommands(this, outputStream);
+                getLogger().info("Dumped server commands to commands.json!");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                getLogger().severe("Failed to dump server commands!");
+            }
+        },1);
     }
 
     @Override

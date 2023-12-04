@@ -15,8 +15,8 @@ import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.jackson.JacksonConfigurationLoader;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
@@ -29,39 +29,35 @@ public class CommandParserTestUtil {
                 RequiredArgumentBuilder.<CommandSourceStack, Integer>argument("test",
                         IntegerArgumentType.integer()).build();
         commandNode.addChild(test);
-        dumpAdaptedCommands(commandNode);
+        dumpAdaptedCommands(commandNode, System.out);
     }
 
-    public static void dumpServerCommands(Plugin plugin) {
+    public static void dumpServerCommands(Plugin plugin, OutputStream outputStream) {
         plugin.getLogger().info("Starting test");
         CraftServer bukkitServer = (CraftServer) Bukkit.getServer();
         MinecraftServer minecraftServer = bukkitServer.getServer();
         Commands commands = minecraftServer.getCommands();
         RootCommandNode<CommandSourceStack> root = commands.getDispatcher().getRoot();
         plugin.getLogger().info("Detected " + root.getChildren().size() + "commands!");
-        dumpAdaptedCommands(root);
+        dumpAdaptedCommands(root, outputStream);
     }
 
-    public static void dumpAdaptedCommands(RootCommandNode<CommandSourceStack> root) {
+    public static void dumpAdaptedCommands(RootCommandNode<CommandSourceStack> root, OutputStream outputStream) {
         ArgumentTypeAdapters adapters = new ArgumentTypeAdapters();
         CommandParser parser = new CommandParser(adapters);
         List<Function> functions = parser.adaptCommand(root);
-        System.out.println(functions.size());
-        for (Function function : functions) {
-            try(ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                Writer writer = new OutputStreamWriter(bos);
-                BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
-                JacksonConfigurationLoader loader = JacksonConfigurationLoader.builder()
-                        .sink(() -> bufferedWriter)
-                        .build();
-                ConfigurationNode node = loader.createNode();
-                node.set(function);
-                loader.save(node);
-                bos.writeTo(System.out);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+        try(Writer writer = new OutputStreamWriter(outputStream);
+            BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
+            JacksonConfigurationLoader loader = JacksonConfigurationLoader.builder()
+                    .sink(() -> bufferedWriter)
+                    .build();
+            ConfigurationNode node = loader.createNode();
+            node.setList(Function.class, functions);
+            loader.save(node);
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
+
     }
 
 }

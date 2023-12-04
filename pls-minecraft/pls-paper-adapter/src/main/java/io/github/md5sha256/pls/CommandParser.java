@@ -31,7 +31,7 @@ public class CommandParser {
 
     private static CommandSourceStack createTestSource() {
         return new CommandSourceStack(
-                CommandSource.NULL,
+                NullCommandSource.NULL,
                 Vec3.ZERO,
                 Vec2.ZERO,
                 null,
@@ -70,8 +70,8 @@ public class CommandParser {
             }
             FunctionParameters parameters = new FunctionParameters(namedParameters);
             Function function = new Function(
-                    root.getName(),
-                    guessDescription(root),
+                    child.getName(),
+                    guessDescription(child),
                     parameters,
                     requiredParams.toArray(String[]::new)
             );
