@@ -6,7 +6,9 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Required;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -82,6 +84,31 @@ public class FunctionParameter {
         return createForEnum(description, allowedConstants, Enum::name);
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        FunctionParameter parameter = (FunctionParameter) object;
+        return Objects.equals(type, parameter.type) && Objects.equals(description,
+                parameter.description) && Arrays.equals(enumConstants,
+                parameter.enumConstants);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(type, description);
+        result = 31 * result + Arrays.hashCode(enumConstants);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "FunctionParameter{" +
+                "type='" + type + '\'' +
+                ", description='" + description + '\'' +
+                ", enumConstants=" + Arrays.toString(enumConstants) +
+                '}';
+    }
 
     /**
      * Json schema type

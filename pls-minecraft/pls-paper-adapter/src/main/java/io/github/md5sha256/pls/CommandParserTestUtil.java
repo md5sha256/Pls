@@ -45,7 +45,7 @@ public class CommandParserTestUtil {
     public static void dumpAdaptedCommands(RootCommandNode<CommandSourceStack> root, OutputStream outputStream) {
         ArgumentTypeAdapters adapters = new ArgumentTypeAdapters();
         CommandParser parser = new CommandParser(adapters);
-        List<Function> functions = parser.adaptCommand(root);
+        List<Function> functions = parser.adaptRootFunction(root);
         try(Writer writer = new OutputStreamWriter(outputStream);
             BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
             JacksonConfigurationLoader loader = JacksonConfigurationLoader.builder()

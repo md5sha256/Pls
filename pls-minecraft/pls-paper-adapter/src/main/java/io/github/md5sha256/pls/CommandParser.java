@@ -8,26 +8,29 @@ import com.mojang.brigadier.tree.RootCommandNode;
 import io.github.md5sha256.pls.function.Function;
 import io.github.md5sha256.pls.function.FunctionParameter;
 import io.github.md5sha256.pls.function.FunctionParameters;
-import io.leangen.geantyref.GenericTypeReflector;
-import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 public class CommandParser {
 
     private static final int OPERATOR_PERMISSION_LEVEL = 4;
 
     private static final CommandSourceStack TEST_SOURCE = createTestSource();
+
+    private final ArgumentTypeAdapters adapters;
+
+    public CommandParser(ArgumentTypeAdapters adapters) {
+        this.adapters = adapters;
+    }
 
     private static CommandSourceStack createTestSource() {
         return new CommandSourceStack(
@@ -43,67 +46,94 @@ public class CommandParser {
         );
     }
 
-    private final ArgumentTypeAdapters adapters;
-
-    public CommandParser(@NonNull ArgumentTypeAdapters adapters) {
-        this.adapters = adapters;
+    public <T> List<List<CommandNode<T>>> parseCommandBranches(CommandNode<T> root) {
+        List<List<CommandNode<T>>> result = new ArrayList<>();
+        dfs(root, new ArrayList<>(), result);
+        return result;
     }
 
+    private <T> void dfs(CommandNode<T> node, List<CommandNode<T>> currentList, List<List<CommandNode<T>>> result) {
+        currentList.add(node);
 
-    private String guessDescription(CommandNode<?> commandNode) {
-        return commandNode.getName() + ", " + commandNode.getUsageText();
-    }
-
-    public List<Function> adaptCommand(RootCommandNode<CommandSourceStack> root) {
-        Collection<CommandNode<CommandSourceStack>> children = root.getChildren();
-        List<Function> functions = new ArrayList<>(children.size());
-        for (CommandNode<CommandSourceStack> child : children) {
-            List<ParameterContext> parameterContexts = new LinkedList<>();
-            adaptChildCommand(child, parameterContexts);
-            Map<String, FunctionParameter> namedParameters = new LinkedHashMap<>(parameterContexts.size());
-            List<String> requiredParams = new ArrayList<>();
-            for (ParameterContext parameterContext : parameterContexts) {
-                namedParameters.put(parameterContext.name(), parameterContext.parameter());
-                if (parameterContext.required()) {
-                    requiredParams.add(parameterContext.name());
-                }
+        if (node.getChildren().isEmpty()) {
+            result.add(new ArrayList<>(currentList));
+        } else {
+            for (CommandNode<T> child : node.getChildren()) {
+                dfs(child, currentList, result);
             }
-            FunctionParameters parameters = new FunctionParameters(namedParameters);
-            Function function = new Function(
-                    child.getName(),
-                    guessDescription(child),
-                    parameters,
-                    requiredParams.toArray(String[]::new)
-            );
-            functions.add(function);
+        }
+
+        currentList.remove(currentList.size() - 1);
+    }
+
+    public List<Function> adaptRootFunction(RootCommandNode<CommandSourceStack> root) {
+        List<Function> functions = new ArrayList<>();
+        for (CommandNode<CommandSourceStack> child : root.getChildren()) {
+            functions.addAll(adaptFunction(root.getName(), child));
         }
         return functions;
     }
 
-    @SuppressWarnings("unchecked")
-    private void adaptChildCommand(CommandNode<CommandSourceStack> root,
-                                   List<ParameterContext> params) {
-        boolean required = root.requirement.test(TEST_SOURCE);
-        if (root instanceof LiteralCommandNode<CommandSourceStack> literalCommandNode) {
-            FunctionParameter parameter = new FunctionParameter(
-                    FunctionParameter.Type.STRING,
-                    "subcommand: " + literalCommandNode.getLiteral(),
-                    null
-            );
-            params.add(new ParameterContext(parameter, root.getName(), required));
-        }
-        if (root instanceof ArgumentCommandNode<CommandSourceStack, ?> argumentCommandNode) {
-            ArgumentType<?> argumentType = argumentCommandNode.getType();
-            @SuppressWarnings("rawtypes")
-            ArgumentTypeAdapter adapter = this.adapters.getRawAdapter(argumentType.getClass())
-                    .orElseGet(BasicArgumentTypeAdapter::new);
-            FunctionParameter parameter = adapter.adaptArgumentType(argumentType, "", required);
-            params.add(new ParameterContext(parameter, root.getName(), required));
-
-        }
-        for (CommandNode<CommandSourceStack> child : root.getChildren()) {
-            adaptChildCommand(child, params);
-        }
+    private List<Function> adaptFunction(String name, CommandNode<CommandSourceStack> root) {
+        List<List<CommandNode<CommandSourceStack>>> commandBranches = parseCommandBranches(root);
+        List<Function> functions = new LinkedList<>();
+        commandBranches.forEach(rawFunction -> functions.addAll(adaptFunction(name, rawFunction)));
+        return functions;
     }
+
+    private List<Function> adaptFunction(String name, List<CommandNode<CommandSourceStack>> nodes) {
+
+        List<ParameterContext> parameterContexts = new ArrayList<>(nodes.size());
+        List<Function> subCommands = new LinkedList<>();
+        StringJoiner label = new StringJoiner(" ");
+        if (!name.isEmpty()) {
+            label.add(name);
+        }
+        for (CommandNode<CommandSourceStack> node : nodes) {
+            boolean required = node.requirement.test(TEST_SOURCE);
+            if (node instanceof RootCommandNode<CommandSourceStack>
+                    || node instanceof LiteralCommandNode<CommandSourceStack>
+            ) {
+                label.add(node.getName());
+            } else if (node instanceof ArgumentCommandNode<?, ?> argumentNode) {
+                ArgumentType<?> argumentType = argumentNode.getType();
+                @SuppressWarnings("rawtypes")
+                ArgumentTypeAdapter adapter = this.adapters.getRawAdapter(argumentType.getClass())
+                        .orElseGet(BasicArgumentTypeAdapter::new);
+                @SuppressWarnings("unchecked")
+                FunctionParameter parameter = adapter.adaptArgumentType(argumentType,
+                        node.getUsageText(),
+                        required
+                );
+                parameterContexts.add(new ParameterContext(parameter, node.getName(), required));
+            } else {
+                throw new IllegalStateException("Unsupported node type: " + node.getClass());
+            }
+        }
+        subCommands.add(createFunction(label.toString(), parameterContexts));
+        return subCommands;
+    }
+
+    private Function createFunction(String commandName, List<ParameterContext> parameterContexts) {
+        Map<String, FunctionParameter> namedParameters = new LinkedHashMap<>(parameterContexts.size());
+        List<String> requiredParams = new ArrayList<>(parameterContexts.size());
+        for (ParameterContext parameterContext : parameterContexts) {
+            namedParameters.put(parameterContext.name(), parameterContext.parameter());
+            if (parameterContext.required()) {
+                requiredParams.add(parameterContext.name());
+            }
+        }
+        StringJoiner desc = new StringJoiner(" ");
+        desc.add(commandName);
+        parameterContexts.forEach(context -> desc.add(context.parameter().description()));
+        FunctionParameters parameters = new FunctionParameters(namedParameters);
+        return new Function(
+                commandName,
+                desc.toString(),
+                parameters,
+                requiredParams.toArray(String[]::new)
+        );
+    }
+
 
 }

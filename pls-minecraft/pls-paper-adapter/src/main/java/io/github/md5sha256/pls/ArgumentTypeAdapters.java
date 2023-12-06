@@ -24,7 +24,7 @@ public class ArgumentTypeAdapters {
     }
 
     @SuppressWarnings("rawtypes")
-    public Optional<ArgumentTypeAdapter> getRawAdapter(Class<? extends ArgumentType> argumentType) {
+    public Optional<ArgumentTypeAdapter<?, ?>> getRawAdapter(Class<? extends ArgumentType> argumentType) {
         ArgumentTypeAdapter<?, ?> adapter = this.adapters.get(argumentType);
         return Optional.ofNullable(adapter);
     }

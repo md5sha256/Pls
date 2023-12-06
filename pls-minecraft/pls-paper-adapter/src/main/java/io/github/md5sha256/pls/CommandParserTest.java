@@ -26,7 +26,7 @@ public class CommandParserTest {
         Commands commands = minecraftServer.getCommands();
         RootCommandNode<CommandSourceStack> root = commands.getDispatcher().getRoot();
         plugin.getLogger().info("Detected " + root.getChildren().size() + "commands!");
-        List<Function> functions = parser.adaptCommand(root);
+        List<Function> functions = parser.adaptRootFunction(root);
         plugin.getLogger().info("Parsed " + functions.size() + " commands!");
     }
 
