@@ -94,7 +94,7 @@ public class CommandParser {
             label.add(name);
         }
         for (CommandNode<CommandSourceStack> node : nodes) {
-            boolean required = node.requirement.test(TEST_SOURCE);
+            boolean required = node.getRequirement().test(TEST_SOURCE);
             if (node instanceof RootCommandNode<CommandSourceStack>
                     || node instanceof LiteralCommandNode<CommandSourceStack>
             ) {
@@ -106,7 +106,7 @@ public class CommandParser {
                         .orElseGet(BasicArgumentTypeAdapter::new);
                 @SuppressWarnings("unchecked")
                 FunctionParameter parameter = adapter.adaptArgumentType(argumentType,
-                        node.getUsageText(),
+                        node,
                         required
                 );
                 parameterContexts.add(new ParameterContext(parameter, node.getName(), required));

@@ -10,6 +10,14 @@ public class ArgumentTypeAdapters {
 
     private final Map<Class<?>, ArgumentTypeAdapter<?, ?>> adapters = new HashMap<>();
 
+    public ArgumentTypeAdapters() {
+
+    }
+
+    public ArgumentTypeAdapters(ArgumentTypeAdapters other) {
+        this.adapters.putAll(other.adapters);
+    }
+
     public <T extends ArgumentType<V>, V> void withAdapter(Class<T> argumentType, ArgumentTypeAdapter<T, V> adapter) {
         this.adapters.put(argumentType, adapter);
     }

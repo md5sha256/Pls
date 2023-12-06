@@ -1,6 +1,7 @@
 package io.github.md5sha256.pls.paper.argument;
 
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.tree.CommandNode;
 import io.github.md5sha256.pls.function.FunctionParameter;
 import io.leangen.geantyref.GenericTypeReflector;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -12,20 +13,22 @@ import java.lang.reflect.Type;
 public final class BasicArgumentTypeAdapter<T extends ArgumentType<V>, V> implements ArgumentTypeAdapter<T, V> {
 
     @Override
-    public FunctionParameter adaptArgumentType(T argumentType,
-                                               String argDesc,
-                                               boolean required) {
+    public FunctionParameter adaptArgumentType(
+            T argumentType,
+            CommandNode<?> node
+    ) {
         Class<?> valueType = getValueType(argumentType.getClass());
         if (valueType == null) {
             throw new IllegalStateException("Failed to parse type argument!");
         }
         return new FunctionParameter(
-                guessType(valueType),
-                argDesc,
-                getEnumConstants(valueType)
+                ArgumentTypeAdapterUtil.guessType(valueType),
+                node.getUsageText(),
+                ArgumentTypeAdapterUtil.getEnumConstants(valueType)
         );
     }
 
+    @SuppressWarnings("rawtypes")
     private @Nullable Class<?> getValueType(@NonNull Class<? extends ArgumentType> clazz) {
         Class<?> target = getValueTypeFromSuperInterfaces(clazz);
         if (target != null) {
@@ -85,37 +88,5 @@ public final class BasicArgumentTypeAdapter<T extends ArgumentType<V>, V> implem
             }
         }
         return null;
-    }
-
-    private String[] getEnumConstants(Class<?> valueType) {
-        Object[] rawEnumConstants =
-                GenericTypeReflector.erase(valueType).getEnumConstants();
-        if (rawEnumConstants == null) {
-            // If enum constants are null, the class doesn't extent enum
-            return null;
-        }
-        String[] enumConstants = new String[rawEnumConstants.length];
-        for (int i = 0; i < rawEnumConstants.length; i++) {
-            Enum<?> constant = (Enum<?>) rawEnumConstants[i];
-            enumConstants[i] = constant.name();
-        }
-        return enumConstants;
-    }
-
-    private FunctionParameter.Type guessType(Class<?> valueType) {
-        // Check if its a boxed type or if its a boolean
-        // If its not a boxed type we assume the input is a string
-        if (!GenericTypeReflector.isBoxType(valueType) || Boolean.class.equals(valueType)) {
-            return FunctionParameter.Type.STRING;
-        }
-        // Check integer types first
-        if (Integer.class.equals(valueType)
-                || Long.class.equals(valueType)
-                || Byte.class.equals(valueType)
-        ) {
-            return FunctionParameter.Type.INTEGER;
-        }
-        // If its not a string or an integer it's a number
-        return FunctionParameter.Type.NUMBER;
     }
 }
