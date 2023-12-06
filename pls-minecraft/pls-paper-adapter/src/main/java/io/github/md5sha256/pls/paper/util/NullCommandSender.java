@@ -1,4 +1,4 @@
-package io.github.md5sha256.pls;
+package io.github.md5sha256.pls.paper.util;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

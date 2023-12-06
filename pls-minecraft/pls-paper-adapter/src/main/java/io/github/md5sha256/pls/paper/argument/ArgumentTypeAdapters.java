@@ -1,4 +1,4 @@
-package io.github.md5sha256.pls;
+package io.github.md5sha256.pls.paper.argument;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 

@@ -1,9 +1,11 @@
-package io.github.md5sha256.pls;
+package io.github.md5sha256.pls.paper.util;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
+import io.github.md5sha256.pls.paper.CommandParser;
+import io.github.md5sha256.pls.paper.argument.ArgumentTypeAdapters;
 import io.github.md5sha256.pls.function.Function;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

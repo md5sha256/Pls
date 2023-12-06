@@ -1,4 +1,4 @@
-package io.github.md5sha256.pls;
+package io.github.md5sha256.pls.paper;
 
 import io.github.md5sha256.pls.function.FunctionParameter;
 

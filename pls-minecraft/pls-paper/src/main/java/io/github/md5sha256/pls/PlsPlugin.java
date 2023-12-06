@@ -1,5 +1,6 @@
 package io.github.md5sha256.pls;
 
+import io.github.md5sha256.pls.paper.util.CommandParserTestUtil;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 

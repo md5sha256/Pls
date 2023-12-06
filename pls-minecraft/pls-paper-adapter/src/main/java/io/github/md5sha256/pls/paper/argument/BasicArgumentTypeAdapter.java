@@ -1,22 +1,13 @@
-package io.github.md5sha256.pls;
+package io.github.md5sha256.pls.paper.argument;
 
 import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import io.github.md5sha256.pls.function.FunctionParameter;
 import io.leangen.geantyref.GenericTypeReflector;
-import io.leangen.geantyref.TypeFactory;
-import io.leangen.geantyref.TypeToken;
-import net.minecraft.commands.arguments.HeightmapTypeArgument;
-import net.minecraft.commands.arguments.SignedArgument;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.units.qual.A;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.AnnotatedType;
-import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 
 public final class BasicArgumentTypeAdapter<T extends ArgumentType<V>, V> implements ArgumentTypeAdapter<T, V> {
 

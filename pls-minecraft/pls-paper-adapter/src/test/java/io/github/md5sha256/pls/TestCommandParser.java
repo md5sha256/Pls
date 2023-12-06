@@ -7,6 +7,8 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
+import io.github.md5sha256.pls.paper.CommandParser;
+import io.github.md5sha256.pls.paper.argument.ArgumentTypeAdapters;
 import io.github.md5sha256.pls.function.Function;
 import io.github.md5sha256.pls.function.FunctionParameter;
 import io.github.md5sha256.pls.function.FunctionParameters;
