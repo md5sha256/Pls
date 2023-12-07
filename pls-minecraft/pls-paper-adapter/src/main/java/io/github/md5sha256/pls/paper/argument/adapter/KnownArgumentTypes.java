@@ -6,6 +6,8 @@ import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import io.github.md5sha256.pls.function.FunctionParameter;
 import io.github.md5sha256.pls.paper.argument.ArgumentTypeAdapter;
 import io.github.md5sha256.pls.paper.argument.ArgumentTypeAdapters;
 import net.minecraft.ChatFormatting;
@@ -28,27 +30,52 @@ import net.minecraft.commands.arguments.OperationArgument;
 import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.commands.arguments.RangeArgument;
 import net.minecraft.commands.arguments.ResourceArgument;
+import net.minecraft.commands.arguments.ResourceKeyArgument;
+import net.minecraft.commands.arguments.ResourceOrTagArgument;
+import net.minecraft.commands.arguments.ResourceOrTagKeyArgument;
+import net.minecraft.commands.arguments.ScoreHolderArgument;
+import net.minecraft.commands.arguments.ScoreboardSlotArgument;
+import net.minecraft.commands.arguments.SlotArgument;
+import net.minecraft.commands.arguments.TeamArgument;
+import net.minecraft.commands.arguments.TemplateMirrorArgument;
+import net.minecraft.commands.arguments.TemplateRotationArgument;
+import net.minecraft.commands.arguments.TimeArgument;
+import net.minecraft.commands.arguments.UuidArgument;
 import net.minecraft.commands.arguments.blocks.BlockInput;
 import net.minecraft.commands.arguments.blocks.BlockPredicateArgument;
 import net.minecraft.commands.arguments.blocks.BlockStateArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
 import net.minecraft.commands.arguments.coordinates.Coordinates;
+import net.minecraft.commands.arguments.coordinates.RotationArgument;
+import net.minecraft.commands.arguments.coordinates.SwizzleArgument;
+import net.minecraft.commands.arguments.coordinates.Vec2Argument;
+import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.commands.arguments.item.FunctionArgument;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.commands.arguments.item.ItemInput;
 import net.minecraft.commands.arguments.item.ItemPredicateArgument;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.scores.DisplaySlot;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 
 import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.UUID;
+import java.util.function.Supplier;
 
 public class KnownArgumentTypes {
 
@@ -161,12 +188,14 @@ public class KnownArgumentTypes {
 
     public static final ArgumentTypeAdapter<ItemArgument, ItemInput> ITEM = register(
             ItemArgument.class,
-            new ScalarDescriptionAdapter<>("An item. The format is item_id{data_tags}, in which data tags can be omitted when not needed. The item_id is  is required, and it should be in the format of resource location. Data tags are inside the {} and are optional.")
+            new ScalarDescriptionAdapter<>(
+                    "An item. The format is item_id{data_tags}, in which data tags can be omitted when not needed. The item_id is  is required, and it should be in the format of resource location. Data tags are inside the {} and are optional.")
     );
 
     public static final ArgumentTypeAdapter<ItemPredicateArgument, ItemPredicateArgument.Result> ITEM_PREDICATE = register(
             ItemPredicateArgument.class,
-            new ScalarDescriptionAdapter<>("An item predicate/filter. The format is item_id{data_tags}, in which data tags can be omitted when not needed. The item_id is  is required, and it should be in the format of resource location. Data tags are inside the {} and are optional.")
+            new ScalarDescriptionAdapter<>(
+                    "An item predicate/filter. The format is item_id{data_tags}, in which data tags can be omitted when not needed. The item_id is  is required, and it should be in the format of resource location. Data tags are inside the {} and are optional.")
     );
 
     public static final ArgumentTypeAdapter<LongArgumentType, Long> LONG = register(
@@ -177,13 +206,15 @@ public class KnownArgumentTypes {
     public static final ArgumentTypeAdapter<MessageArgument, MessageArgument.Message> MESSAGE =
             register(
                     MessageArgument.class,
-                    new ScalarDescriptionAdapter<>("A plain text string. Can include spaces as well as target selectors. The game replaces entity selectors in the message with the list of selected entities' names, which is formatted as \"name1 and name2\" for two entities, or \"name1, name2, ... and nameN\" for N entities.")
+                    new ScalarDescriptionAdapter<>(
+                            "A plain text string. Can include spaces as well as target selectors. The game replaces entity selectors in the message with the list of selected entities' names, which is formatted as \"name1 and name2\" for two entities, or \"name1, name2, ... and nameN\" for N entities.")
             );
 
     public static final ArgumentTypeAdapter<NbtPathArgument, NbtPathArgument.NbtPath> NBT_PATH =
             register(
                     NbtPathArgument.class,
-                    new ScalarDescriptionAdapter<>("An NBT path. A path has the general form node.….node, where each node declares what types of child tags can be chosen from previous tags.")
+                    new ScalarDescriptionAdapter<>(
+                            "An NBT path. A path has the general form node.….node, where each node declares what types of child tags can be chosen from previous tags.")
             );
 
     public static final ArgumentTypeAdapter<NbtTagArgument, Tag> NBT_TAG = register(
@@ -198,12 +229,12 @@ public class KnownArgumentTypes {
 
     public static final ArgumentTypeAdapter<ObjectiveCriteriaArgument, ObjectiveCriteria>
             OBJECTIVE_CRITERIA = register(
-                    ObjectiveCriteriaArgument.class,
+            ObjectiveCriteriaArgument.class,
             new ScalarDescriptionAdapter<>("A scoreboard objective criterion.")
     );
 
     public static final ArgumentTypeAdapter<OperationArgument, OperationArgument.Operation>
-    OPERATION = register(
+            OPERATION = register(
             OperationArgument.class,
             new ScalarDescriptionAdapter<>("An arithmetic operator for /scoreboard.")
     );
@@ -211,27 +242,115 @@ public class KnownArgumentTypes {
     public static final ArgumentTypeAdapter<ParticleArgument, ParticleOptions> PARTICLE =
             register(
                     ParticleArgument.class,
-                    new ScalarDescriptionAdapter<>("A resource location of a particle followed by particle parameters that are particle-specific.")
+                    new ScalarDescriptionAdapter<>(
+                            "A resource location of a particle followed by particle parameters that are particle-specific.")
             );
 
     public static final ArgumentTypeAdapter<RangeArgument.Ints, MinMaxBounds.Ints> INT_RANGE =
             register(
                     RangeArgument.Ints.class,
-                    new ScalarDescriptionAdapter<>("An integer within a certain bounds in the format min..max.")
+                    new ScalarDescriptionAdapter<>(
+                            "An integer within a certain bounds in the format min..max.")
             );
 
     public static final ArgumentTypeAdapter<RangeArgument.Floats, MinMaxBounds.Doubles> FLOAT_RANGE =
             register(
                     RangeArgument.Floats.class,
-                    new ScalarDescriptionAdapter<>("A double within a certain bounds in the format min..max.")
+                    new ScalarDescriptionAdapter<>(
+                            "A double within a certain bounds in the format min..max.")
             );
 
-    private static <T extends ArgumentType<V>, V> ArgumentTypeAdapter<T, V> register(Class<T> argumentType,
-                                                                                     ArgumentTypeAdapter<T, V> adapter) {
-        ADAPTERS.withAdapter(argumentType, adapter);
-        return adapter;
+    static {
+        registerFactory(ResourceArgument.class, KnownArgumentTypes::createResourceHolder);
+        registerFactory(ResourceKeyArgument.class, KnownArgumentTypes::createResourceKey);
+        registerFactory(ResourceOrTagArgument.class, KnownArgumentTypes::createResourceOrTag);
+        registerFactory(ResourceOrTagKeyArgument.class, KnownArgumentTypes::createResourceOrTagKey);
     }
 
+    public static final ArgumentTypeAdapter<RotationArgument, Coordinates> ROTATION = register(
+            RotationArgument.class,
+            new ScalarDescriptionAdapter<>(
+                    "A rotation with double number elements, including yaw and pitch, measured in degrees. Tilde notation can be used to specify a rotation relative to the execution rotation.")
+    );
+
+    public static final ArgumentTypeAdapter<ScoreHolderArgument, ScoreHolderArgument.Result> SCORE_HOLDER = register(
+            ScoreHolderArgument.class,
+            new ScalarDescriptionAdapter<>(
+                    "A selection of score holders. It may be either a target selector, a player name, a UUID, or * for all score holders tracked by the scoreboard. Named player needn't be online, and it even needn't be a real player's name. Each score holder argument may specify if it can select only one score holder or multiple score holders.")
+    );
+
+    public static final ArgumentTypeAdapter<ScoreboardSlotArgument, DisplaySlot> SCOREBOARD_SLOT = register(
+            ScoreboardSlotArgument.class,
+            new EnumArgumentAdapter<>("A scoreboard display slot.", DisplaySlot.values())
+    );
+
+    public static final ArgumentTypeAdapter<SlotArgument, Integer> SLOT = register(
+            SlotArgument.class,
+            new ScalarDescriptionAdapter<>(
+                    "A string notation that refers to certain slots in the inventory which consists of \"slot type\" and an optional \"slot number\", in the format of <slot_type> or <slot_type>.<slot_number>")
+    );
+
+    public static final ArgumentTypeAdapter<StringArgumentType, String> STRING = register(
+            StringArgumentType.class,
+            (type, node) -> {
+                String desc = switch (type.getType()) {
+                    case SINGLE_WORD -> "A single word.";
+                    case QUOTABLE_PHRASE -> "A single word or a quoted string.";
+                    case GREEDY_PHRASE ->
+                            "A phrase taking the rest of the command as the string argument.";
+                };
+                return new FunctionParameter(FunctionParameter.Type.STRING, desc, null);
+            }
+    );
+
+    public static final ArgumentTypeAdapter<SwizzleArgument, EnumSet<Direction.Axis>> SWIZZLE = register(
+            SwizzleArgument.class,
+            new ScalarDescriptionAdapter<>(
+                    "Any non-repeating combination of the characters 'x', 'y', and 'z'. Axes can be declared in any order, but they cannot duplicate.")
+    );
+
+    public static final ArgumentTypeAdapter<TeamArgument, String> TEAM = register(
+            TeamArgument.class,
+            new ScalarDescriptionAdapter<>(
+                    "A team name of an unquoted string. Allowed characters include: -, +, ., _, A-Z, a-z, and 0-9.")
+    );
+
+    public static final ArgumentTypeAdapter<TemplateMirrorArgument, Mirror> TEMPLATE_MIRROR = register(
+            TemplateMirrorArgument.class,
+            new EnumArgumentAdapter<>("A template's mirror orientation.", Mirror.values())
+    );
+
+    public static final ArgumentTypeAdapter<TemplateRotationArgument, Rotation> TEMPLATE_ROTATION = register(
+            TemplateRotationArgument.class,
+            new EnumArgumentAdapter<>("A template's rotation.", Rotation.values())
+    );
+
+    public static final ArgumentTypeAdapter<TimeArgument, Integer> TIME = register(
+            TimeArgument.class,
+            new ScalarDescriptionAdapter<>(
+                    "A single-precision floating point number suffixed with a unit. The time is set to the closest integer tick after unit conversion. Units include: " +
+                            "d: an in-game day, 24000 game ticks; " +
+                            "s: a second, 20 game ticks; " +
+                            "t (default and may be omitted): a single game tick; the default unit."
+            )
+    );
+
+    public static final ArgumentTypeAdapter<UuidArgument, UUID> UUID = register(
+            UuidArgument.class,
+            new ScalarDescriptionAdapter<>("A UUID in the hyphenated hexadecimal format.")
+    );
+
+    public static final ArgumentTypeAdapter<Vec2Argument, Coordinates> VEC2 = register(
+            Vec2Argument.class,
+            new ScalarDescriptionAdapter<>(
+                    "A two-dimensional coordinates with floating-point number elements. Accepts tilde and caret notations.")
+    );
+
+    public static final ArgumentTypeAdapter<Vec3Argument, Coordinates> VEC3 = register(
+            Vec3Argument.class,
+            new ScalarDescriptionAdapter<>(
+                    "A three-dimensional coordinates with floating-point number elements. Accepts tilde and caret notations.")
+    );
 
     private static ArgumentTypeAdapter<HeightmapTypeArgument, Heightmap.Types> createHeightMapAdapter() {
         Heightmap.Types[] allowedEnumConstants = Arrays.stream(Heightmap.Types.values())
@@ -242,6 +361,37 @@ public class KnownArgumentTypes {
                 allowedEnumConstants,
                 EnumArgumentAdapter::lowerCaseName
         );
+    }
+
+    private static <T> ArgumentTypeAdapter<ResourceArgument<T>, Holder.Reference<T>> createResourceHolder() {
+        return new ScalarDescriptionAdapter<>(
+                "A existing registered resource location in correct registry.");
+    }
+
+    private static <T> ArgumentTypeAdapter<ResourceKeyArgument<T>, ResourceKey<T>> createResourceKey() {
+        return new ScalarDescriptionAdapter<>(
+                "A resource location which will be resolved during command execution into a registry entry in correct registry.");
+    }
+
+    private static <T> ArgumentTypeAdapter<ResourceOrTagArgument<T>, ResourceOrTagArgument.Result<T>> createResourceOrTag() {
+        return new ScalarDescriptionAdapter<>(
+                "An existing registered resource location or tag in correct registry.");
+    }
+
+    private static <T> ArgumentTypeAdapter<ResourceOrTagKeyArgument<T>, ResourceOrTagKeyArgument.Result<T>> createResourceOrTagKey() {
+        return new ScalarDescriptionAdapter<>(
+                "A resource location or a tag, which will be resolved during command execution into an entry or tag in correct registry.");
+    }
+
+    private static <T extends ArgumentType<V>, V> ArgumentTypeAdapter<T, V> register(Class<T> argumentType,
+                                                                                     ArgumentTypeAdapter<T, V> adapter) {
+        ADAPTERS.withAdapter(argumentType, adapter);
+        return adapter;
+    }
+
+    private static <T extends ArgumentType<?>> void registerFactory(Class<? super T> erasedArgType,
+                                                                    Supplier<ArgumentTypeAdapter<? super T, ?>> adapterFactory) {
+        ADAPTERS.withGenericFactory(erasedArgType, adapterFactory);
     }
 
 }

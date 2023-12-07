@@ -6,6 +6,7 @@ import io.github.md5sha256.pls.function.FunctionParameter;
 
 import java.lang.reflect.GenericDeclaration;
 
+@FunctionalInterface
 public interface ArgumentTypeAdapter<T extends ArgumentType<V>, V> {
     FunctionParameter adaptArgumentType(T argumentType, CommandNode<?> node);
 
