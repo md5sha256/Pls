@@ -85,7 +85,7 @@ public class KnownArgumentTypes {
             register(
                     AngleArgument.class,
                     new ScalarDescriptionAdapter<>(
-                            "Must be a yaw angle, measured in degrees with float number. -180.0 for due north, -90.0 for due east, 0.0 for due south, 90.0 for due west, to 179.9 for just west of due north, before wrapping back around to -180.0. Tilde notation can be used to specify a rotation relative to the execution yaw angle.")
+                            "A yaw angle, measured in degrees with float number. -180.0 for due north, -90.0 for due east, 0.0 for due south, 90.0 for due west, to 179.9 for just west of due north, before wrapping back around to -180.0. Tilde notation can be used to specify a rotation relative to the execution yaw angle.")
             );
 
     public static final ArgumentTypeAdapter<BlockPosArgument, Coordinates> BLOCK_POS =

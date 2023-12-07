@@ -126,7 +126,7 @@ public class CommandParser {
         }
         StringJoiner desc = new StringJoiner(" ");
         desc.add(commandName);
-        parameterContexts.forEach(context -> desc.add(context.parameter().description()));
+        parameterContexts.forEach(context -> desc.add("<" + context.name() + ">"));
         FunctionParameters parameters = new FunctionParameters(namedParameters);
         return new Function(
                 commandName,

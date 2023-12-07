@@ -12,6 +12,7 @@ import io.github.md5sha256.pls.paper.argument.ArgumentTypeAdapters;
 import io.github.md5sha256.pls.function.Function;
 import io.github.md5sha256.pls.function.FunctionParameter;
 import io.github.md5sha256.pls.function.FunctionParameters;
+import io.github.md5sha256.pls.paper.argument.adapter.KnownArgumentTypes;
 import net.minecraft.commands.CommandSourceStack;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
