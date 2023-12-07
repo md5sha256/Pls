@@ -54,7 +54,9 @@ public class CommandParserTestUtil {
                     .sink(() -> bufferedWriter)
                     .build();
             ConfigurationNode node = loader.createNode();
-            node.setList(Function.class, functions);
+            node.node("tools")
+                    .node("functions")
+                    .setList(Function.class, functions);
             loader.save(node);
         } catch (IOException ex) {
             ex.printStackTrace();
