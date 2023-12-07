@@ -394,4 +394,8 @@ public class KnownArgumentTypes {
         ADAPTERS.withGenericFactory(erasedArgType, adapterFactory);
     }
 
+    public static ArgumentTypeAdapters defaultAdapters() {
+        return new ArgumentTypeAdapters(ADAPTERS);
+    }
+
 }

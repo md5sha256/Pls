@@ -105,10 +105,7 @@ public class CommandParser {
                 ArgumentTypeAdapter adapter = this.adapters.getRawAdapter(argumentType.getClass())
                         .orElseGet(BasicArgumentTypeAdapter::new);
                 @SuppressWarnings("unchecked")
-                FunctionParameter parameter = adapter.adaptArgumentType(argumentType,
-                        node,
-                        required
-                );
+                FunctionParameter parameter = adapter.adaptArgumentType(argumentType, node);
                 parameterContexts.add(new ParameterContext(parameter, node.getName(), required));
             } else {
                 throw new IllegalStateException("Unsupported node type: " + node.getClass());

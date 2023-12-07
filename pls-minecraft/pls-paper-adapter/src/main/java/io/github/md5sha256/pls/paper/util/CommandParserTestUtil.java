@@ -7,6 +7,7 @@ import com.mojang.brigadier.tree.RootCommandNode;
 import io.github.md5sha256.pls.paper.CommandParser;
 import io.github.md5sha256.pls.paper.argument.ArgumentTypeAdapters;
 import io.github.md5sha256.pls.function.Function;
+import io.github.md5sha256.pls.paper.argument.adapter.KnownArgumentTypes;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
@@ -45,8 +46,7 @@ public class CommandParserTestUtil {
     }
 
     public static void dumpAdaptedCommands(RootCommandNode<CommandSourceStack> root, OutputStream outputStream) {
-        ArgumentTypeAdapters adapters = new ArgumentTypeAdapters();
-        CommandParser parser = new CommandParser(adapters);
+        CommandParser parser = new CommandParser(KnownArgumentTypes.defaultAdapters());
         List<Function> functions = parser.adaptRootFunction(root);
         try(Writer writer = new OutputStreamWriter(outputStream);
             BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
