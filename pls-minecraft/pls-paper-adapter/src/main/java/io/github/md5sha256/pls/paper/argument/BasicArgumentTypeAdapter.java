@@ -23,7 +23,7 @@ public final class BasicArgumentTypeAdapter<T extends ArgumentType<V>, V> implem
         }
         return new FunctionParameter(
                 ArgumentTypeAdapterUtil.guessType(valueType),
-                node.getUsageText(),
+                node.getName(),
                 ArgumentTypeAdapterUtil.getEnumConstants(valueType)
         );
     }

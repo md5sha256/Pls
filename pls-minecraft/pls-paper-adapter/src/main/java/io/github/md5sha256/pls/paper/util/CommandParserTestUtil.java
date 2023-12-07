@@ -4,6 +4,8 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
+import io.github.md5sha256.pls.function.FunctionWrapper;
+import io.github.md5sha256.pls.function.FunctionWrapperSerializer;
 import io.github.md5sha256.pls.paper.CommandParser;
 import io.github.md5sha256.pls.paper.argument.ArgumentTypeAdapters;
 import io.github.md5sha256.pls.function.Function;
@@ -48,15 +50,18 @@ public class CommandParserTestUtil {
     public static void dumpAdaptedCommands(RootCommandNode<CommandSourceStack> root, OutputStream outputStream) {
         CommandParser parser = new CommandParser(KnownArgumentTypes.defaultAdapters());
         List<Function> functions = parser.adaptRootFunction(root);
+        List<FunctionWrapper> wrappedFunctions = functions.stream().map(FunctionWrapper::new).toList();
         try(Writer writer = new OutputStreamWriter(outputStream);
             BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
             JacksonConfigurationLoader loader = JacksonConfigurationLoader.builder()
                     .sink(() -> bufferedWriter)
+                    .defaultOptions(options -> options.serializers(serializers -> serializers.register(
+                            FunctionWrapper.class, new FunctionWrapperSerializer())))
                     .build();
             ConfigurationNode node = loader.createNode();
             node.node("tools")
-                    .node("functions")
-                    .setList(Function.class, functions);
+                    .setList(FunctionWrapper.class, wrappedFunctions);
+
             loader.save(node);
         } catch (IOException ex) {
             ex.printStackTrace();
