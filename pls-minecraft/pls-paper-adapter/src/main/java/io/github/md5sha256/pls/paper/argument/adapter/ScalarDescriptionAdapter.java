@@ -4,7 +4,6 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import io.github.md5sha256.pls.paper.argument.GenericArgumentTypeAdapter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.List;
 import java.util.StringJoiner;
 
 public class ScalarDescriptionAdapter<T extends ArgumentType<V>, V> extends GenericArgumentTypeAdapter<T, V> {

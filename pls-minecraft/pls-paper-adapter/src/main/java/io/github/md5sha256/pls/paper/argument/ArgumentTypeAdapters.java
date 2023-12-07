@@ -1,8 +1,6 @@
 package io.github.md5sha256.pls.paper.argument;
 
 import com.mojang.brigadier.arguments.ArgumentType;
-import io.leangen.geantyref.GenericTypeReflector;
-import net.minecraft.commands.arguments.ResourceArgument;
 
 import java.util.HashMap;
 import java.util.Map;
