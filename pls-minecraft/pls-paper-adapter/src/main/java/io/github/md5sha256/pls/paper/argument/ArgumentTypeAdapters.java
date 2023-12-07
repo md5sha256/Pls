@@ -2,6 +2,7 @@ package io.github.md5sha256.pls.paper.argument;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import io.leangen.geantyref.GenericTypeReflector;
+import net.minecraft.commands.arguments.ResourceArgument;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,7 @@ public class ArgumentTypeAdapters {
 
     public ArgumentTypeAdapters(ArgumentTypeAdapters other) {
         this.adapters.putAll(other.adapters);
+        this.adapterFactories.putAll(other.adapterFactories);
     }
 
     public <T extends ArgumentType<V>, V> void withAdapter(Class<T> argumentType, ArgumentTypeAdapter<T, V> adapter) {
@@ -26,8 +28,7 @@ public class ArgumentTypeAdapters {
     }
 
     public <T extends ArgumentType<?>> void withGenericFactory(Class<? super T> argumentType, Supplier<ArgumentTypeAdapter<? super T, ?>> adapterFactory) {
-        Class<?> erased = GenericTypeReflector.erase(argumentType);
-        this.adapterFactories.put(erased, adapterFactory);
+        this.adapterFactories.put(argumentType, adapterFactory);
     }
 
     @SuppressWarnings("rawtypes")
@@ -36,8 +37,14 @@ public class ArgumentTypeAdapters {
         if (adapter != null) {
             return Optional.of(adapter);
         }
-        Class<?> erased = GenericTypeReflector.erase(argumentType);
-        return Optional.ofNullable(this.adapterFactories.get(erased)).map(Supplier::get);
+        return Optional.ofNullable(this.adapterFactories.get(argumentType)).map(Supplier::get);
     }
 
+    @Override
+    public String toString() {
+        return "ArgumentTypeAdapters{" +
+                "adapters=" + adapters.keySet() +
+                ", adapterFactories=" + adapterFactories.keySet() +
+                '}';
+    }
 }

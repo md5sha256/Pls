@@ -18,6 +18,7 @@ import net.minecraft.commands.arguments.ComponentArgument;
 import net.minecraft.commands.arguments.CompoundTagArgument;
 import net.minecraft.commands.arguments.DimensionArgument;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.GameModeArgument;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.commands.arguments.HeightmapTypeArgument;
@@ -31,6 +32,7 @@ import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.commands.arguments.RangeArgument;
 import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.commands.arguments.ResourceKeyArgument;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.ResourceOrTagArgument;
 import net.minecraft.commands.arguments.ResourceOrTagKeyArgument;
 import net.minecraft.commands.arguments.ScoreHolderArgument;
@@ -55,6 +57,7 @@ import net.minecraft.commands.arguments.item.FunctionArgument;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.commands.arguments.item.ItemInput;
 import net.minecraft.commands.arguments.item.ItemPredicateArgument;
+import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
@@ -63,8 +66,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -146,6 +147,11 @@ public class KnownArgumentTypes {
                             "A double.")
             );
 
+    public static final ArgumentTypeAdapter<EntityArgument, EntitySelector> ENTITY = register(
+            EntityArgument.class,
+            new ScalarDescriptionAdapter<>("Must be a player name, a target selector or a UUID. Each entity argument may place limits on the number of entities (single/multiple) selected or the type of entities (player/any entity) selected.")
+    );
+
     public static final ArgumentTypeAdapter<EntityAnchorArgument, EntityAnchorArgument.Anchor>
             ENTITY_ANCHOR = register(
             EntityAnchorArgument.class,
@@ -222,6 +228,8 @@ public class KnownArgumentTypes {
             new ScalarDescriptionAdapter<>("An NBT tag of any type in StringifiedNBT (SNBT) format.")
     );
 
+
+
     public static final ArgumentTypeAdapter<ObjectiveArgument, String> OBJECTIVE = register(
             ObjectiveArgument.class,
             new ScalarDescriptionAdapter<>("A valid scoreboard objective name.")
@@ -263,6 +271,14 @@ public class KnownArgumentTypes {
     static {
         registerFactory(ResourceArgument.class, KnownArgumentTypes::createResourceHolder);
         registerFactory(ResourceKeyArgument.class, KnownArgumentTypes::createResourceKey);
+    }
+
+    public static final ArgumentTypeAdapter<ResourceLocationArgument, ResourceLocation> RESOURCE_LOCATION = register(
+            ResourceLocationArgument.class,
+            new ScalarDescriptionAdapter<>("A resource location which will be resolved during command execution into unregistered content or client-side content.")
+    );
+
+    static {
         registerFactory(ResourceOrTagArgument.class, KnownArgumentTypes::createResourceOrTag);
         registerFactory(ResourceOrTagKeyArgument.class, KnownArgumentTypes::createResourceOrTagKey);
     }
