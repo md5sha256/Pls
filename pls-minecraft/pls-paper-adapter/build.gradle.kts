@@ -1,8 +1,8 @@
 plugins {
     java
     idea
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.papermc.paperweight.userdev") version "1.5.10"
+    id("io.github.goooler.shadow") version "8.1.8"
+    id("io.papermc.paperweight.userdev") version "1.7.1"
 }
 
 repositories {
@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.20.2-R0.1-SNAPSHOT") {
+    paperweight.paperDevBundle("1.21-R0.1-SNAPSHOT") {
         exclude("com.mojang.brigadier")
     }
     implementation(projects.plsCore)
@@ -21,7 +21,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
-val targetJavaVersion = 17
+val targetJavaVersion = 21
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
 
 tasks {
@@ -31,16 +31,9 @@ tasks {
         options.isFork = true
         options.isDeprecation = true
     }
-    assemble {
-        dependsOn(reobfJar)
-    }
 
-    named("reobfJar", io.papermc.paperweight.tasks.RemapJar::class) {
-        outputJar.set(file("build/libs/${project.name}-${project.version}.jar"))
-    }
 
     test {
         useJUnitPlatform()
     }
-
 }

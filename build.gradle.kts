@@ -8,7 +8,11 @@ plugins {
 group = "io.github.md5sha256"
 version = "1.0-SNAPSHOT"
 
-subprojects {
+val targetJavaVersion = 21
+
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
+
+allprojects {
 
     group = rootProject.group
     version = rootProject.version
@@ -25,11 +29,11 @@ subprojects {
         maven("https://oss.sonatype.org/content/groups/public/")
     }
 
-    java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    java.toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
 
     tasks {
         withType(JavaCompile::class) {
-            options.release.set(17)
+            options.release.set(targetJavaVersion)
             options.encoding = Charsets.UTF_8.name()
             options.isFork = true
             options.isDeprecation = true

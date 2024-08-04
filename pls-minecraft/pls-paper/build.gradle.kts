@@ -1,8 +1,8 @@
 plugins {
     java
     idea
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("xyz.jpenilla.run-paper") version "2.2.2"
+    id("xyz.jpenilla.run-paper") version "2.3.0"
+    id("io.github.goooler.shadow") version "8.1.8"
 }
 
 repositories {
@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
     implementation(projects.plsCore)
     compileOnly(projects.plsMinecraft.plsPaperAdapter)
     compileOnly("com.mojang:brigadier:1.1.8")
@@ -25,7 +25,7 @@ dependencies {
     }
 }
 
-val targetJavaVersion = 17
+val targetJavaVersion = 21
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
 
 
@@ -57,7 +57,7 @@ tasks {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("1.20.2")
+        minecraftVersion("1.21")
     }
 
 }
